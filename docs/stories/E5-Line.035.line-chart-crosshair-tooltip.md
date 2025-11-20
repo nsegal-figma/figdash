@@ -3,7 +3,7 @@ id: VIZ-035
 title: "Line Chart Crosshair Tooltip"
 type: Story
 epic: E5-Line
-status: Draft
+status: Completed
 priority: High
 storyPoints: 3
 sprint: 4

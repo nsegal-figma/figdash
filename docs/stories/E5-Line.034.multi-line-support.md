@@ -3,7 +3,7 @@ id: VIZ-034
 title: "Multi-Line Support"
 type: Story
 epic: E5-Line
-status: Draft
+status: Completed
 priority: High
 storyPoints: 5
 sprint: 4

@@ -3,7 +3,7 @@ id: VIZ-037
 title: "Line Chart Annotations"
 type: Story
 epic: E5-Line
-status: Draft
+status: Completed
 priority: Low
 storyPoints: 2
 sprint: 4

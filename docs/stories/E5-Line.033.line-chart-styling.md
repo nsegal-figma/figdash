@@ -3,7 +3,7 @@ id: VIZ-033
 title: "Line Chart Styling"
 type: Story
 epic: E5-Line
-status: Draft
+status: Completed
 priority: High
 storyPoints: 3
 sprint: 4

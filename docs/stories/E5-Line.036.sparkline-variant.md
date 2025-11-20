@@ -3,7 +3,7 @@ id: VIZ-036
 title: "Sparkline Variant"
 type: Story
 epic: E5-Line
-status: Draft
+status: Completed
 priority: Medium
 storyPoints: 3
 sprint: 4
