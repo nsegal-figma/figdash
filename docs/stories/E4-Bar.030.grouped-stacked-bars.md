@@ -13,7 +13,7 @@ dependencies: ["VIZ-026"]
 # Story E4-Bar.030: Grouped & Stacked Bars
 
 ## Status
-Draft
+Completed
 
 ## Story
 As a user, I want to compare multiple series

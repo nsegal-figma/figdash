@@ -13,7 +13,7 @@ dependencies: ["VIZ-027", "VIZ-021"]
 # Story E4-Bar.028: Bar Chart Tooltip Integration
 
 ## Status
-Draft
+Completed
 
 ## Story
 As a user, I want to see detailed values on hover

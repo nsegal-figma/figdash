@@ -3,7 +3,7 @@
  * Enhanced bar chart using design tokens and primitive components
  */
 
-import { BarChart as RechartsBarChart, Bar } from 'recharts';
+import { BarChart as RechartsBarChart, Bar, ReferenceLine, LabelList } from 'recharts';
 import {
   AxisX,
   AxisY,
@@ -61,6 +61,18 @@ export interface BarChartV2Props {
   showBarBorder?: boolean;
   /** Bar border color */
   barBorderColor?: string;
+  /** Bar orientation */
+  orientation?: 'vertical' | 'horizontal';
+  /** Stacked bars (for multi-series) */
+  stacked?: boolean;
+  /** Reference lines for annotations */
+  referenceLines?: Array<{
+    value: number;
+    label?: string;
+    color?: string;
+  }>;
+  /** Show data labels on bars */
+  showDataLabels?: boolean;
 }
 
 /**
@@ -107,6 +119,10 @@ export function BarChartV2({
   hoverEffects = true,
   showBarBorder = false,
   barBorderColor = '#FFFFFF',
+  orientation = 'vertical',
+  stacked = false,
+  referenceLines = [],
+  showDataLabels = false,
 }: BarChartV2Props) {
   // Normalize yKeys to array
   const yKeysArray = Array.isArray(yKeys) ? yKeys : [yKeys];
@@ -147,31 +163,46 @@ export function BarChartV2({
     );
   }
 
+  // For horizontal bars, swap X and Y axis roles
+  const isHorizontal = orientation === 'horizontal';
+
   return (
     <ChartContainer title={title} width={width} height={height}>
-      <RechartsBarChart data={data}>
+      <RechartsBarChart data={data} layout={isHorizontal ? 'vertical' : 'horizontal'}>
         {gradientDefs}
 
         {showGrid && <Grid />}
 
-        <AxisX
-          dataKey={xKey}
-          label={xLabel}
-          tickRotation={xTickRotation}
-        />
-
-        <AxisY
-          label={yLabel}
-          tickFormatter={valueFormatter}
-        />
-
-        {showTooltip && (
-          <ChartTooltip
-            valueFormatter={valueFormatter}
-          />
+        {isHorizontal ? (
+          <>
+            <AxisX label={yLabel} tickFormatter={valueFormatter} />
+            <AxisY dataKey={xKey} label={xLabel} type="category" />
+          </>
+        ) : (
+          <>
+            <AxisX dataKey={xKey} label={xLabel} tickRotation={xTickRotation} />
+            <AxisY label={yLabel} tickFormatter={valueFormatter} />
+          </>
         )}
 
+        {showTooltip && <ChartTooltip valueFormatter={valueFormatter} />}
+
         {showLegend && isMultiSeries && <ChartLegend />}
+
+        {referenceLines.map((line, index) => (
+          <ReferenceLine
+            key={`ref-${index}`}
+            y={isHorizontal ? undefined : line.value}
+            x={isHorizontal ? line.value : undefined}
+            stroke={line.color || designTokens.colors.semantic.info}
+            strokeDasharray="3 3"
+            label={{
+              value: line.label,
+              fill: designTokens.colors.neutral.text[600],
+              fontSize: parseInt(designTokens.typography.fontSize.xs),
+            }}
+          />
+        ))}
 
         {yKeysArray.map((key, index) => {
           const color = barColors[index % barColors.length];
@@ -182,15 +213,29 @@ export function BarChartV2({
               key={key}
               dataKey={key}
               fill={fillColor}
-              radius={[barRadius, barRadius, 0, 0]}
+              radius={isHorizontal ? [0, barRadius, barRadius, 0] : [barRadius, barRadius, 0, 0]}
               animationDuration={designTokens.animation.duration.normal}
               stroke={showBarBorder ? barBorderColor : undefined}
               strokeWidth={showBarBorder ? 2 : 0}
+              stackId={stacked ? 'stack' : undefined}
               style={{
                 cursor: hoverEffects ? 'pointer' : 'default',
                 transition: hoverEffects ? 'all 150ms ease-out' : 'none',
               }}
-            />
+            >
+              {showDataLabels && (
+                <LabelList
+                  dataKey={key}
+                  position={isHorizontal ? 'right' : 'top'}
+                  formatter={valueFormatter}
+                  style={{
+                    fill: designTokens.colors.neutral.text[700],
+                    fontSize: parseInt(designTokens.typography.fontSize.xs),
+                    fontFamily: designTokens.typography.fontFamily.primary,
+                  }}
+                />
+              )}
+            </Bar>
           );
         })}
       </RechartsBarChart>

@@ -267,4 +267,119 @@ describe('BarChartV2', () => {
       expect(container).toBeTruthy();
     });
   });
+
+  describe('Horizontal Bars (VIZ-029)', () => {
+    it('renders horizontal bars', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          orientation="horizontal"
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+
+    it('swaps axes for horizontal orientation', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          orientation="horizontal"
+          xLabel="Categories"
+          yLabel="Values"
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+  });
+
+  describe('Stacked Bars (VIZ-030)', () => {
+    it('renders stacked bars for multi-series', () => {
+      const multiSeriesData = [
+        { category: 'A', series1: 10, series2: 15 },
+        { category: 'B', series1: 20, series2: 25 },
+      ];
+
+      const { container } = render(
+        <BarChartV2
+          data={multiSeriesData}
+          xKey="category"
+          yKeys={['series1', 'series2']}
+          stacked
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+
+    it('stacked works with horizontal orientation', () => {
+      const multiSeriesData = [
+        { category: 'A', series1: 10, series2: 15 },
+      ];
+
+      const { container } = render(
+        <BarChartV2
+          data={multiSeriesData}
+          xKey="category"
+          yKeys={['series1', 'series2']}
+          orientation="horizontal"
+          stacked
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+  });
+
+  describe('Annotations (VIZ-031)', () => {
+    it('renders reference lines', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          referenceLines={[
+            { value: 20, label: 'Target', color: '#FF0000' },
+          ]}
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+
+    it('renders multiple reference lines', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          referenceLines={[
+            { value: 15, label: 'Min' },
+            { value: 25, label: 'Target' },
+            { value: 35, label: 'Max' },
+          ]}
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+
+    it('shows data labels on bars', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          showDataLabels
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+  });
 });

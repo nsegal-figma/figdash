@@ -13,7 +13,7 @@ dependencies: ["VIZ-026"]
 # Story E4-Bar.031: Bar Chart Annotations
 
 ## Status
-Draft
+Completed
 
 ## Story
 As a user, I want data labels and reference lines

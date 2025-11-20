@@ -13,7 +13,7 @@ dependencies: ["VIZ-026"]
 # Story E4-Bar.029: Horizontal Bar Variant
 
 ## Status
-Draft
+Completed
 
 ## Story
 As a user, I want horizontal bars for categorical data
