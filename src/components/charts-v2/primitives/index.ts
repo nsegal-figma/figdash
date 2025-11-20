@@ -7,10 +7,12 @@ export { AxisX } from './AxisX';
 export { AxisY } from './AxisY';
 export { Grid, GridRows, GridColumns } from './Grid';
 export { ChartTooltip } from './ChartTooltip';
+export { ChartLegend } from './ChartLegend';
 export type { AxisXProps } from './AxisX';
 export type { AxisYProps } from './AxisY';
 export type { GridProps } from './Grid';
 export type { ChartTooltipProps } from './ChartTooltip';
+export type { ChartLegendProps } from './ChartLegend';
 
 // Axis utilities
 export {

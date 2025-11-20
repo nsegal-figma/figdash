@@ -8,8 +8,8 @@ import { Tooltip } from 'recharts';
 import type { TooltipProps } from 'recharts';
 import { designTokens } from '@/lib/designTokens';
 
-export interface ChartTooltipProps<TValue extends any = any, TName extends any = any>
-  extends Omit<TooltipProps<TValue, TName>, 'contentStyle' | 'cursor'> {
+export interface ChartTooltipProps
+  extends Omit<TooltipProps<any, any>, 'contentStyle' | 'cursor' | 'animationEasing'> {
   /** Custom formatter for tooltip values */
   valueFormatter?: (value: any, name: any) => string;
   /** Custom label formatter */
@@ -43,7 +43,7 @@ export interface ChartTooltipProps<TValue extends any = any, TName extends any =
  * />
  * ```
  */
-export function ChartTooltip<TValue extends any = any, TName extends any = any>({
+export function ChartTooltip({
   valueFormatter,
   labelFormatter,
   showCursor = true,
@@ -51,7 +51,7 @@ export function ChartTooltip<TValue extends any = any, TName extends any = any>(
   animationDuration = 300,
   followCursor = false,
   ...props
-}: ChartTooltipProps<TValue, TName>) {
+}: ChartTooltipProps) {
   return (
     <Tooltip
       {...props}
@@ -84,7 +84,6 @@ export function ChartTooltip<TValue extends any = any, TName extends any = any>(
           : false
       }
       animationDuration={animationDuration}
-      animationEasing={designTokens.animation.easing.easeOut}
       isAnimationActive={true}
       formatter={valueFormatter}
       labelFormatter={labelFormatter}
