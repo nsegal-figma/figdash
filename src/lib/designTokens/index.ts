@@ -39,6 +39,17 @@ export { animationTokens } from './animation';
 
 // Re-export utility functions
 export { getContrastRatio, meetsWCAG_AA } from './colors';
+export {
+  generateSequentialScale,
+  generateDivergingScale,
+  generateCategoricalPalette,
+  adjustBrightness,
+  simulateColorBlindness,
+  checkColorBlindAccessibility,
+  autoAdjustContrast,
+  generateDarkModeVariant,
+  generateDarkModePalette,
+} from './colorUtils';
 
 // Re-export types
 export type * from './types';
