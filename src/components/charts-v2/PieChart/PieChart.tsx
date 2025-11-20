@@ -167,7 +167,7 @@ export function PieChartV2({
               : false
           }
         >
-          {data.map((entry, index) => (
+          {data.map((_entry, index) => (
             <Cell
               key={`cell-${index}`}
               fill={pieColors[index % pieColors.length]}

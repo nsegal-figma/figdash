@@ -2,13 +2,17 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSurveyStore } from '../stores/useSurveyStore';
 import { Card, Stat, EmptyState, Button } from '../components';
-import { BarChart, PieChart } from '../components/charts';
+import { BarChartV2 } from '../components/charts-v2/BarChart';
+import { PieChartV2 } from '../components/charts-v2/PieChart';
 import { calculateFrequencyDistribution, calculateDescriptiveStats } from '../lib/analytics';
-import { FileText, Users, BarChart3, TrendingUp, Upload as UploadIcon } from 'lucide-react';
+import { formatSmartNumber } from '../lib/designTokens';
+import { FileText, Users, BarChart3, TrendingUp, Upload as UploadIcon, Download } from 'lucide-react';
+import { useChartExport } from '../hooks/useChartExport';
 
 export function Dashboard() {
   const navigate = useNavigate();
   const { surveyData } = useSurveyStore();
+  const { exportCSV } = useChartExport();
 
   const stats = useMemo(() => {
     if (!surveyData) return null;
@@ -119,17 +123,29 @@ export function Dashboard() {
             <Card key={index} padding="lg">
               {item.type === 'categorical' ? (
                 <>
-                  <BarChart
+                  {/* Enhanced Bar Chart */}
+                  <BarChartV2
                     data={item.data}
+                    xKey="name"
+                    yKeys="value"
                     title={item.columnName}
-                    yAxisLabel="Count"
+                    yLabel="Count"
                     height={300}
+                    gradient
+                    hoverEffects
+                    valueFormatter={formatSmartNumber}
                   />
+
+                  {/* Enhanced Donut Chart */}
                   <div className="mt-4">
-                    <PieChart
+                    <PieChartV2
                       data={item.data}
+                      variant="donut"
                       height={250}
                       showLegend={false}
+                      centerLabel="Total"
+                      centerValue={formatSmartNumber(item.data.reduce((sum, d) => sum + d.value, 0))}
+                      valueFormatter={formatSmartNumber}
                     />
                   </div>
                 </>
@@ -172,6 +188,13 @@ export function Dashboard() {
 
         {/* Actions */}
         <div className="flex justify-center gap-4">
+          <Button
+            variant="secondary"
+            onClick={() => exportCSV(surveyData.rows, `${surveyData.fileName}-export.csv`)}
+            icon={<Download className="h-5 w-5" />}
+          >
+            Export Data
+          </Button>
           <Button variant="secondary" onClick={() => navigate('/')}>
             Upload New Data
           </Button>

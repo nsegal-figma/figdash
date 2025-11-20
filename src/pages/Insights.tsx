@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSurveyStore } from '../stores/useSurveyStore';
 import { Card, EmptyState, Button } from '../components';
-import { BarChart } from '../components/charts';
+import { BarChartV2 } from '../components/charts-v2/BarChart';
 import { analyzeTextColumn } from '../lib/analytics';
+import { formatSmartNumber } from '../lib/designTokens';
 import { FileText, Upload as UploadIcon, Smile, Frown, Meh, TrendingUp } from 'lucide-react';
 
 export function Insights() {
@@ -168,17 +169,23 @@ export function Insights() {
                 </Card>
               </div>
 
-              {/* Word Frequencies */}
+              {/* Word Frequencies & Common Themes */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card padding="lg">
-                  <BarChart
+                  {/* Enhanced Horizontal Bar Chart for Word Frequencies */}
+                  <BarChartV2
                     data={item.analytics.wordFrequencies.slice(0, 10).map(w => ({
                       name: w.word,
                       value: w.count,
                     }))}
+                    xKey="name"
+                    yKeys="value"
                     title="Most Common Words"
-                    yAxisLabel="Frequency"
+                    yLabel="Frequency"
                     height={300}
+                    orientation="horizontal"
+                    gradient
+                    valueFormatter={formatSmartNumber}
                   />
                 </Card>
 
