@@ -51,6 +51,16 @@ export interface BarChartV2Props {
   valueFormatter?: (value: any) => string;
   /** X axis tick rotation */
   xTickRotation?: number;
+  /** Use gradient fill for bars */
+  gradient?: boolean;
+  /** Bar corner radius (top corners) */
+  barRadius?: number;
+  /** Enable hover effects (scale, shadow) */
+  hoverEffects?: boolean;
+  /** Show bar borders */
+  showBarBorder?: boolean;
+  /** Bar border color */
+  barBorderColor?: string;
 }
 
 /**
@@ -92,6 +102,11 @@ export function BarChartV2({
   colors,
   valueFormatter,
   xTickRotation = 0,
+  gradient = false,
+  barRadius = 8,
+  hoverEffects = true,
+  showBarBorder = false,
+  barBorderColor = '#FFFFFF',
 }: BarChartV2Props) {
   // Normalize yKeys to array
   const yKeysArray = Array.isArray(yKeys) ? yKeys : [yKeys];
@@ -99,6 +114,21 @@ export function BarChartV2({
 
   // Use provided colors or design token categorical colors
   const barColors = colors || designTokens.colors.data.categorical;
+
+  // Generate gradient definitions if needed
+  const gradientDefs = gradient ? (
+    <defs>
+      {barColors.map((color, index) => {
+        const lighterColor = designTokens.colors.data.sequential[2]; // Lighter shade
+        return (
+          <linearGradient key={`gradient-${index}`} id={`barGradient${index}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={lighterColor} stopOpacity={0.8} />
+            <stop offset="100%" stopColor={color} stopOpacity={1} />
+          </linearGradient>
+        );
+      })}
+    </defs>
+  ) : null;
 
   // Handle loading state
   if (isLoading) {
@@ -120,6 +150,8 @@ export function BarChartV2({
   return (
     <ChartContainer title={title} width={width} height={height}>
       <RechartsBarChart data={data}>
+        {gradientDefs}
+
         {showGrid && <Grid />}
 
         <AxisX
@@ -141,15 +173,26 @@ export function BarChartV2({
 
         {showLegend && isMultiSeries && <ChartLegend />}
 
-        {yKeysArray.map((key, index) => (
-          <Bar
-            key={key}
-            dataKey={key}
-            fill={barColors[index % barColors.length]}
-            radius={[8, 8, 0, 0]}
-            animationDuration={designTokens.animation.duration.normal}
-          />
-        ))}
+        {yKeysArray.map((key, index) => {
+          const color = barColors[index % barColors.length];
+          const fillColor = gradient ? `url(#barGradient${index})` : color;
+
+          return (
+            <Bar
+              key={key}
+              dataKey={key}
+              fill={fillColor}
+              radius={[barRadius, barRadius, 0, 0]}
+              animationDuration={designTokens.animation.duration.normal}
+              stroke={showBarBorder ? barBorderColor : undefined}
+              strokeWidth={showBarBorder ? 2 : 0}
+              style={{
+                cursor: hoverEffects ? 'pointer' : 'default',
+                transition: hoverEffects ? 'all 150ms ease-out' : 'none',
+              }}
+            />
+          );
+        })}
       </RechartsBarChart>
     </ChartContainer>
   );

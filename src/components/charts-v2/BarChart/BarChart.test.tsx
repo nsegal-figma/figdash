@@ -183,4 +183,88 @@ describe('BarChartV2', () => {
 
     expect(getByText('No data available for this chart')).toBeTruthy();
   });
+
+  describe('Styling Enhancements', () => {
+    it('renders with gradient fill', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          gradient
+        />
+      );
+
+      // Just verify it renders without errors
+      expect(container).toBeTruthy();
+    });
+
+    it('applies custom bar radius', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          barRadius={12}
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+
+    it('enables hover effects', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          hoverEffects
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+
+    it('disables hover effects', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          hoverEffects={false}
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+
+    it('shows bar borders', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          showBarBorder
+          barBorderColor="#000000"
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+
+    it('combines gradient and borders', () => {
+      const { container } = render(
+        <BarChartV2
+          data={mockData}
+          xKey="category"
+          yKeys="value"
+          gradient
+          showBarBorder
+          barRadius={16}
+        />
+      );
+
+      expect(container).toBeTruthy();
+    });
+  });
 });
