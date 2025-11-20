@@ -51,6 +51,23 @@ export {
   formatSmartNumber,
 } from './typographyUtils';
 
+// Spacing & layout utility functions
+export {
+  calculateChartMargins,
+  calculateChartDimensions,
+  getCurrentBreakpoint,
+  meetsBreakpoint,
+  getResponsiveChartHeight,
+  calculateChartGrid,
+  getSpacingPx,
+  aspectRatios,
+  calculateInnerDimensions,
+  supportsFeature,
+  getOptimalChartsPerRow,
+  breakpoints,
+} from './spacingUtils';
+export type { ChartMargins, Breakpoint } from './spacingUtils';
+
 // Re-export utility functions
 export { getContrastRatio, meetsWCAG_AA } from './colors';
 export {
