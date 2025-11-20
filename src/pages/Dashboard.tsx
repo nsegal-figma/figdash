@@ -4,7 +4,7 @@ import { useSurveyStore } from '../stores/useSurveyStore';
 import { Card, EmptyState, Button } from '../components';
 import { BarChartV2 } from '../components/charts-v2/BarChart';
 import { calculateFrequencyDistribution } from '../lib/analytics';
-import { formatSmartNumber, generateCategoricalPalette } from '../lib/designTokens';
+import { generateCategoricalPalette } from '../lib/designTokens';
 import { FileText, Upload as UploadIcon, Download } from 'lucide-react';
 import { useChartExport } from '../hooks/useChartExport';
 
@@ -275,20 +275,36 @@ export function Dashboard() {
                 </h2>
               </div>
 
-              {/* Chart */}
+              {/* Chart - Each bar gets different color */}
               {viz.type === 'horizontal-bar' && (
-                <BarChartV2
-                  data={viz.data}
-                  xKey="name"
-                  yKeys="value"
-                  orientation="horizontal"
-                  height={Math.max(300, viz.data.length * 60)}
-                  gradient
-                  showDataLabels
-                  valueFormatter={formatSmartNumber}
-                  xLabel="Number of Respondents"
-                  showGrid={true}
-                />
+                <div className="w-full">
+                  {viz.data.map((item: any, barIdx: number) => {
+                    const colors = generateCategoricalPalette(Math.min(viz.data.length, 12));
+                    return (
+                      <div key={barIdx} className="mb-2">
+                        <div className="flex items-center gap-4">
+                          <div className="w-48 text-sm font-medium text-gray-700 text-right flex-shrink-0">
+                            {item.name}
+                          </div>
+                          <div className="flex-1 flex items-center gap-3">
+                            <div
+                              className="h-10 rounded-r-lg transition-all hover:opacity-90"
+                              style={{
+                                width: `${(item.value / Math.max(...viz.data.map((d: any) => d.value))) * 100}%`,
+                                background: `linear-gradient(90deg, ${colors[barIdx % colors.length]}dd, ${colors[barIdx % colors.length]})`,
+                                minWidth: '40px'
+                              }}
+                            >
+                              <span className="px-3 py-2 text-sm font-semibold text-white">
+                                {item.value}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
 
               {viz.type === 'stacked-crosstab' && (
