@@ -11,6 +11,7 @@ import { PaletteSelector } from '../components/PaletteSelector';
 import { SortSelector } from '../components/SortSelector';
 import { ChartFilter } from '../components/ChartFilter';
 import { ChartExportButton } from '../components/ChartExportButton';
+import { CopyChartButton } from '../components/CopyChartButton';
 import { EditableChartTitle } from '../components/EditableChartTitle';
 import { ResetFiltersButton } from '../components/ResetFiltersButton';
 import { CrossTabBuilder } from '../components/CrossTabBuilder';
@@ -213,6 +214,7 @@ export function SurveyDashboard() {
                   <p className="mt-0.5 text-sm text-gray-600">n={analysis.n}</p>
                 </div>
                 <div className="flex items-center gap-2" data-export-exclude>
+                  <CopyChartButton chartId={chartId} />
                   <ChartExportButton chartId={chartId} chartTitle={analysis.title} />
                   {analysis.availableValues && analysis.availableValues.length > 1 && (
                     <ChartFilter

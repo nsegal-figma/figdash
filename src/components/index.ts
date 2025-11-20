@@ -12,6 +12,7 @@ export { PaletteSelector } from './PaletteSelector';
 export { SortSelector } from './SortSelector';
 export { ChartFilter } from './ChartFilter';
 export { ChartExportButton } from './ChartExportButton';
+export { CopyChartButton } from './CopyChartButton';
 export { EditableChartTitle } from './EditableChartTitle';
 export { ResetFiltersButton } from './ResetFiltersButton';
 export { CrossTabBuilder } from './CrossTabBuilder';

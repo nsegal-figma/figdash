@@ -15,6 +15,7 @@ interface SurveyStore {
   isGeneratingAI: boolean;
   filters: Map<string, string[]>; // columnName -> selected values
   customTitles: Map<string, string>; // columnName -> custom title
+  figmaToken: string | null;
   setSurveyData: (data: SurveyData) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -27,6 +28,7 @@ interface SurveyStore {
   clearAllFilters: () => void;
   setCustomTitle: (columnName: string, title: string) => void;
   clearCustomTitle: (columnName: string) => void;
+  setFigmaToken: (token: string | null) => void;
   clearSurvey: () => void;
 }
 
@@ -40,6 +42,7 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   isGeneratingAI: false,
   filters: new Map(),
   customTitles: new Map(),
+  figmaToken: localStorage.getItem('figma_token') || null,
   setSurveyData: (data) => set({ surveyData: data, error: null }),
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error, isLoading: false }),
@@ -81,6 +84,14 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
       newTitles.delete(columnName);
       return { customTitles: newTitles };
     }),
+  setFigmaToken: (token) => {
+    if (token) {
+      localStorage.setItem('figma_token', token);
+    } else {
+      localStorage.removeItem('figma_token');
+    }
+    set({ figmaToken: token });
+  },
   clearSurvey: () => set({ surveyData: null, error: null, isLoading: false, aiSummaries: new Map(), filters: new Map(), customTitles: new Map() }),
 }));
 
