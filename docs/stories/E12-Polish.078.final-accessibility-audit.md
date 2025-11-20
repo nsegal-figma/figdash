@@ -3,7 +3,7 @@ id: VIZ-078
 title: "Final Accessibility Audit"
 type: Task
 epic: E12-Polish
-status: Draft
+status: Completed
 priority: High
 storyPoints: 3
 sprint: 10

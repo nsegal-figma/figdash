@@ -3,7 +3,7 @@ id: VIZ-053
 title: "Keyboard Navigation"
 type: Story
 epic: E10-Accessibility
-status: Draft
+status: Completed
 priority: Critical
 storyPoints: 5
 sprint: 7

@@ -3,7 +3,7 @@ id: VIZ-073
 title: "Performance Tuning"
 type: Task
 epic: E12-Polish
-status: Draft
+status: Completed
 priority: High
 storyPoints: 5
 sprint: 9

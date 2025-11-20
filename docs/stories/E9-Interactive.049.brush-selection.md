@@ -3,7 +3,7 @@ id: VIZ-049
 title: "Brush Selection"
 type: Story
 epic: E9-Interactive
-status: Draft
+status: Completed
 priority: Medium
 storyPoints: 5
 sprint: 6

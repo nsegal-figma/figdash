@@ -3,7 +3,7 @@ id: VIZ-076
 title: "Team Training"
 type: Task
 epic: E12-Polish
-status: Draft
+status: Completed
 priority: High
 storyPoints: 3
 sprint: 10

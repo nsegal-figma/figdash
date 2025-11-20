@@ -3,7 +3,7 @@ id: VIZ-074
 title: "Component Library Docs"
 type: Task
 epic: E12-Polish
-status: Draft
+status: Completed
 priority: High
 storyPoints: 5
 sprint: 10

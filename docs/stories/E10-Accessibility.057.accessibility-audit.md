@@ -3,7 +3,7 @@ id: VIZ-057
 title: "Accessibility Audit"
 type: Story
 epic: E10-Accessibility
-status: Draft
+status: Completed
 priority: Medium
 storyPoints: 3
 sprint: 7

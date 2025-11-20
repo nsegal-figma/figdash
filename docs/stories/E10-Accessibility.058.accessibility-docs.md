@@ -3,7 +3,7 @@ id: VIZ-058
 title: "Accessibility Docs"
 type: Task
 epic: E10-Accessibility
-status: Draft
+status: Completed
 priority: Medium
 storyPoints: 2
 sprint: 7

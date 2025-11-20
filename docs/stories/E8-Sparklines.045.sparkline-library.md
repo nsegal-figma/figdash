@@ -3,7 +3,7 @@ id: VIZ-045
 title: "Sparkline Library"
 type: Story
 epic: E8-Sparklines
-status: Draft
+status: Completed
 priority: High
 storyPoints: 5
 sprint: 6

@@ -3,7 +3,7 @@ id: VIZ-051
 title: "Data Export"
 type: Story
 epic: E9-Interactive
-status: Draft
+status: Completed
 priority: Low
 storyPoints: 3
 sprint: 6

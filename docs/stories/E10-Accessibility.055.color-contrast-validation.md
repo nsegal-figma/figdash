@@ -3,7 +3,7 @@ id: VIZ-055
 title: "Color Contrast Validation"
 type: Story
 epic: E10-Accessibility
-status: Draft
+status: Completed
 priority: High
 storyPoints: 3
 sprint: 7

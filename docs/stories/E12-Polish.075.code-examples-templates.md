@@ -3,7 +3,7 @@ id: VIZ-075
 title: "Code Examples & Templates"
 type: Task
 epic: E12-Polish
-status: Draft
+status: Completed
 priority: Medium
 storyPoints: 3
 sprint: 10

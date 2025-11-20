@@ -3,7 +3,7 @@ id: VIZ-054
 title: "Screen Reader Support"
 type: Story
 epic: E10-Accessibility
-status: Draft
+status: Completed
 priority: Critical
 storyPoints: 5
 sprint: 7

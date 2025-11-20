@@ -3,7 +3,7 @@ id: VIZ-046
 title: "Small Multiples Framework"
 type: Story
 epic: E8-Sparklines
-status: Draft
+status: Completed
 priority: Medium
 storyPoints: 5
 sprint: 6

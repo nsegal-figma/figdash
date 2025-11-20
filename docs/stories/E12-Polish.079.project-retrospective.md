@@ -3,7 +3,7 @@ id: VIZ-079
 title: "Project Retrospective"
 type: Task
 epic: E12-Polish
-status: Draft
+status: Completed
 priority: Medium
 storyPoints: 2
 sprint: 10

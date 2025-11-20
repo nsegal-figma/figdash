@@ -3,7 +3,7 @@ id: VIZ-077
 title: "Migration Guide"
 type: Task
 epic: E12-Polish
-status: Draft
+status: Completed
 priority: Medium
 storyPoints: 2
 sprint: 10

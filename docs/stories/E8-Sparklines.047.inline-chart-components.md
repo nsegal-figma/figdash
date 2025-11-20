@@ -3,7 +3,7 @@ id: VIZ-047
 title: "Inline Chart Components"
 type: Story
 epic: E8-Sparklines
-status: Draft
+status: Completed
 priority: Low
 storyPoints: 3
 sprint: 6

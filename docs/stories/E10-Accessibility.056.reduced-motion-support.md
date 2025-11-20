@@ -3,7 +3,7 @@ id: VIZ-056
 title: "Reduced Motion Support"
 type: Story
 epic: E10-Accessibility
-status: Draft
+status: Completed
 priority: High
 storyPoints: 3
 sprint: 7
