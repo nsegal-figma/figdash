@@ -40,3 +40,6 @@ stories/**/*.zip
 # Conversion scripts
 convert-stories.cjs
 convert-stories.sh
+
+*storybook.log
+storybook-static
