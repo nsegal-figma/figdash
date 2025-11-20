@@ -37,6 +37,20 @@ export { shadowTokens } from './shadows';
 export { borderRadiusTokens } from './borderRadius';
 export { animationTokens } from './animation';
 
+// Typography utility functions
+export {
+  formatNumberAbbreviated,
+  formatNumber,
+  formatPercentage,
+  formatCurrency,
+  formatDate,
+  truncateText,
+  getResponsiveFontSize,
+  formatMonospaceNumber,
+  formatCompactNumber,
+  formatSmartNumber,
+} from './typographyUtils';
+
 // Re-export utility functions
 export { getContrastRatio, meetsWCAG_AA } from './colors';
 export {
