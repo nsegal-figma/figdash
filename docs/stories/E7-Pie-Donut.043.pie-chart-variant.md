@@ -3,7 +3,7 @@ id: VIZ-043
 title: "Pie Chart Variant"
 type: Story
 epic: E7-Pie/Donut
-status: Draft
+status: Completed
 priority: Low
 storyPoints: 2
 sprint: 5

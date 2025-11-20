@@ -3,7 +3,7 @@ id: VIZ-044
 title: "Advanced Donut Features"
 type: Story
 epic: E7-Pie/Donut
-status: Draft
+status: Completed
 priority: Low
 storyPoints: 3
 sprint: 5

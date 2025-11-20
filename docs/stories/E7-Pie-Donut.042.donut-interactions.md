@@ -3,7 +3,7 @@ id: VIZ-042
 title: "Donut Interactions"
 type: Story
 epic: E7-Pie/Donut
-status: Draft
+status: Completed
 priority: High
 storyPoints: 3
 sprint: 5
