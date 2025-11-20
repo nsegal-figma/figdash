@@ -24,6 +24,9 @@ export interface TextAnalytics {
   wordFrequencies: WordFrequency[];
   commonThemes: string[];
   overallSentiment: SentimentResult;
+  representativeQuotes: string[];
+  allResponses: string[];
+  aiSummary: string;
 }
 
 export function analyzeSentiment(text: string): SentimentResult {
@@ -163,9 +166,108 @@ export function calculateResponseLengthStats(texts: string[]): {
   };
 }
 
+export function generateAISummary(texts: string[], sentiment: SentimentResult, themes: string[]): string {
+  if (texts.length === 0) return 'No responses available for analysis.';
+
+  const totalResponses = texts.length;
+  const sentimentLabel = sentiment.sentiment;
+  const topThemes = themes.slice(0, 3);
+
+  // Build summary paragraph
+  let summary = `Based on ${totalResponses} response${totalResponses !== 1 ? 's' : ''}, `;
+
+  // Add sentiment context
+  if (sentimentLabel === 'positive') {
+    summary += 'respondents expressed generally positive views. ';
+  } else if (sentimentLabel === 'negative') {
+    summary += 'respondents expressed concerns and challenges. ';
+  } else {
+    summary += 'respondents shared balanced perspectives. ';
+  }
+
+  // Add theme analysis
+  if (topThemes.length > 0) {
+    summary += 'Key themes include ';
+    if (topThemes.length === 1) {
+      summary += `${topThemes[0]}. `;
+    } else if (topThemes.length === 2) {
+      summary += `${topThemes[0]} and ${topThemes[1]}. `;
+    } else {
+      summary += `${topThemes[0]}, ${topThemes[1]}, and ${topThemes[2]}. `;
+    }
+  }
+
+  // Add insight about response patterns
+  const shortResponses = texts.filter(t => t.length < 50).length;
+  const longResponses = texts.filter(t => t.length > 100).length;
+
+  if (longResponses > totalResponses * 0.3) {
+    summary += 'Many respondents provided detailed, substantive feedback. ';
+  } else if (shortResponses > totalResponses * 0.5) {
+    summary += 'Responses tend to be brief and direct. ';
+  }
+
+  // Add sentiment detail if strong
+  if (Math.abs(sentiment.score) > totalResponses * 0.5) {
+    if (sentiment.sentiment === 'positive') {
+      summary += 'Overall sentiment is notably positive.';
+    } else if (sentiment.sentiment === 'negative') {
+      summary += 'Overall sentiment indicates areas requiring attention.';
+    }
+  }
+
+  return summary.trim();
+}
+
+export function extractRepresentativeQuotes(texts: string[], maxQuotes: number = 5): string[] {
+  const validTexts = texts.filter(t => t && t.trim());
+
+  if (validTexts.length === 0) return [];
+
+  // Analyze sentiment for each text
+  const textsWithSentiment = validTexts.map(text => ({
+    text,
+    sentiment: analyzeSentiment(text),
+    length: text.length,
+  }));
+
+  // Get a mix of positive, negative, and neutral quotes
+  const positive = textsWithSentiment.filter(t => t.sentiment.sentiment === 'positive');
+  const negative = textsWithSentiment.filter(t => t.sentiment.sentiment === 'negative');
+
+  const quotes: string[] = [];
+
+  // Add most positive quote
+  if (positive.length > 0) {
+    const mostPositive = positive.sort((a, b) => b.sentiment.score - a.sentiment.score)[0];
+    quotes.push(mostPositive.text);
+  }
+
+  // Add most negative quote
+  if (negative.length > 0) {
+    const mostNegative = negative.sort((a, b) => a.sentiment.score - b.sentiment.score)[0];
+    quotes.push(mostNegative.text);
+  }
+
+  // Add longest substantive response
+  const substantive = validTexts.filter(t => t.length > 50).sort((a, b) => b.length - a.length);
+  if (substantive.length > 0 && !quotes.includes(substantive[0])) {
+    quotes.push(substantive[0]);
+  }
+
+  // Fill remaining slots with diverse quotes
+  const remaining = validTexts.filter(t => !quotes.includes(t));
+  const step = Math.floor(remaining.length / (maxQuotes - quotes.length)) || 1;
+  for (let i = 0; i < remaining.length && quotes.length < maxQuotes; i += step) {
+    quotes.push(remaining[i]);
+  }
+
+  return quotes.slice(0, maxQuotes);
+}
+
 export function analyzeTextColumn(texts: string[]): TextAnalytics {
   const validTexts = texts.filter(t => t && t.trim());
-  
+
   if (validTexts.length === 0) {
     return {
       totalResponses: 0,
@@ -181,6 +283,9 @@ export function analyzeTextColumn(texts: string[]): TextAnalytics {
         positiveWords: [],
         negativeWords: [],
       },
+      representativeQuotes: [],
+      allResponses: [],
+      aiSummary: 'No responses available for analysis.',
     };
   }
 
@@ -188,6 +293,8 @@ export function analyzeTextColumn(texts: string[]): TextAnalytics {
   const wordFrequencies = calculateWordFrequencies(validTexts, 20);
   const commonThemes = extractKeywords(validTexts, 10);
   const overallSentiment = analyzeMultipleSentiments(validTexts);
+  const representativeQuotes = extractRepresentativeQuotes(validTexts, 5);
+  const aiSummary = generateAISummary(validTexts, overallSentiment, commonThemes);
 
   return {
     totalResponses: validTexts.length,
@@ -197,8 +304,12 @@ export function analyzeTextColumn(texts: string[]): TextAnalytics {
     wordFrequencies,
     commonThemes,
     overallSentiment,
+    representativeQuotes,
+    allResponses: validTexts,
+    aiSummary,
   };
 }
+
 
 
 

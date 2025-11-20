@@ -1,0 +1,101 @@
+ResponseID,Role,CompanySize,Q1_Discover,Q1_Plan,Q1_Design,Q1_Develop,Q1_Measure,Q2_UseAI_Discover,Q2_UseAI_Plan,Q2_UseAI_Design,Q2_UseAI_Develop,Q2_UseAI_Measure,Q3_PrimaryResearch,Q3_DeskResearch,Q3_BehavioralData,Q3_Brainstorming,Q3_ConceptDev,Q3_InternalReviews,Q4_Satisfaction_PrimaryResearch,Q4_Satisfaction_DeskResearch,Q4_Satisfaction_BehavioralData,Q4_Satisfaction_Brainstorming,Q5_DiscoverImprovement,Q18_MCPFamiliarity,Q20_MCP_PrimaryResearch,Q20_MCP_DeskResearch,Q21_MCP_Satisfaction_PrimaryResearch,Q22_MCPDiscoverImprovement
+R001,Designer,50-99,Yes,Yes,Yes,No,No,Yes,Yes,Yes,No,No,Yes,Yes,No,Yes,Yes,No,4,5,0,4,Better integration with existing research tools and real-time collaboration features,Familiar and have used,Yes,Yes,4,More customization options for our specific research workflows
+R002,Developer,250-499,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Familiar and planning to use,No,No,0,
+R003,PM,100-249,Yes,Yes,Yes,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,Yes,Yes,No,Yes,5,4,5,5,Faster processing of large survey datasets and better analytics,Familiar and have used,Yes,Yes,5,Better data export capabilities and visualization options
+R004,Designer,2-49,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,Yes,No,Yes,Yes,No,0,3,0,4,More AI-generated design variations and automated user research,Never heard of,No,No,0,
+R005,Developer,500-999,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R006,Researcher,1000-1999,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,4,5,Better collaboration features between AI tools,Familiar and have used,Yes,Yes,5,Improved context awareness for design research
+R007,PM,50-99,Yes,Yes,No,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,Yes,No,No,No,2,4,5,0,More accurate sentiment analysis but current tools are slow,Familiar and planning to use,Yes,No,0,
+R008,Developer,100-249,No,No,No,Yes,Yes,No,No,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Familiar but never used,No,No,0,
+R009,Designer,250-499,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,Yes,3,5,4,5,Integration with Figma for automatic insights would be game-changing,Familiar and have used,Yes,Yes,4,Better documentation and examples for advanced use cases
+R010,Researcher,1000-1999,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,No,Yes,No,Yes,5,5,0,4,Automated report generation from research findings,Familiar and have used,Yes,Yes,5,More templates for common research tasks
+R011,Developer,2-49,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R012,Designer,500-999,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,Yes,No,Yes,Yes,No,0,4,0,5,Better brainstorming prompts and frameworks,Familiar and planning to use,No,Yes,0,
+R013,PM,50-99,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,No,1,5,4,0,Tools need significant improvement in reliability and accuracy,Familiar and have used,Yes,Yes,2,Better error handling and reliability improvements
+R014,Engineer,100-249,No,No,No,Yes,Yes,No,No,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Never heard of,No,No,0,
+R015,Designer,250-499,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,Nothing - very satisfied with current tools,Familiar and have used,Yes,Yes,5,More training resources and best practices
+R016,Researcher,1000-1999,Yes,Yes,No,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,No,No,No,Yes,5,4,0,0,Better data visualization of research insights,Familiar and have used,Yes,Yes,5,Better performance with large datasets
+R017,Developer,2-49,No,Yes,No,Yes,No,No,Yes,No,Yes,No,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R018,Designer,500-999,Yes,No,Yes,No,No,Yes,No,Yes,No,No,No,Yes,No,Yes,No,No,0,2,0,4,More customization for design-specific research needs,Familiar and planning to use,No,No,0,
+R019,PM,100-249,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,4,5,5,5,Faster iteration on research questions,Familiar and have used,Yes,Yes,5,Better integration with other internal tools
+R020,Engineer,50-99,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Familiar but never used,No,No,0,
+R021,Designer,2-49,Yes,Yes,Yes,No,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,Yes,Yes,No,3,4,3,5,Better templates for user interview analysis,Familiar and have used,Yes,Yes,3,Easier setup process for new projects
+R022,Researcher,250-499,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,4,More advanced statistical analysis capabilities,Familiar and have used,Yes,Yes,5,Support for more data formats and sources
+R023,PM,500-999,Yes,Yes,No,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,No,Yes,Yes,No,4,5,0,3,Better stakeholder reporting features,Familiar and planning to use,Yes,Yes,0,
+R024,Developer,1000-1999,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R025,Designer,100-249,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,Yes,Yes,No,Yes,Yes,No,0,3,0,5,Automated competitive analysis tools,Never heard of,No,No,0,
+R026,Researcher,50-99,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,Yes,4,5,5,4,Better integration between discovery and validation phases,Familiar and have used,Yes,Yes,4,More robust API for custom integrations
+R027,Engineer,2-49,Yes,Yes,No,Yes,No,Yes,Yes,No,Yes,No,Yes,No,No,Yes,No,No,0,0,0,3,Simpler interface with fewer features,Familiar but never used,No,No,0,
+R028,PM,250-499,Yes,Yes,Yes,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,2,3,4,5,Current tools are too expensive for the value they provide,Familiar and planning to use,Yes,No,0,
+R029,Designer,500-999,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,4,5,5,Nothing major - incremental improvements would help,Familiar and have used,Yes,Yes,5,Better mobile experience for field research
+R030,Developer,1000-1999,No,No,No,Yes,Yes,No,No,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R031,Researcher,100-249,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,Real-time collaboration during research sessions,Familiar and have used,Yes,Yes,5,More powerful search and filtering capabilities
+R032,PM,50-99,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No,No,Yes,No,3,0,0,4,Better integration with design systems,Familiar and planning to use,No,No,0,
+R033,Designer,2-49,Yes,No,Yes,No,No,Yes,No,Yes,No,No,No,Yes,No,Yes,Yes,No,0,4,0,5,More design-specific AI features,Familiar but never used,No,Yes,0,
+R034,Engineer,250-499,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Never heard of,No,No,0,
+R035,Researcher,500-999,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,4,5,4,5,Better AI-powered participant recruitment,Familiar and have used,Yes,Yes,4,Support for video analysis and transcription
+R036,PM,1000-1999,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,Yes,5,5,5,0,Multi-language support for global research,Familiar and have used,Yes,Yes,5,Better privacy and security controls
+R037,Designer,100-249,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,3,4,4,4,More AI assistance in synthesizing research findings,Familiar and have used,Yes,Yes,3,Offline mode for field research
+R038,Developer,50-99,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Familiar but never used,No,No,0,
+R039,Researcher,2-49,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,Better participant management and scheduling,Familiar and have used,Yes,Yes,5,More comprehensive onboarding and tutorials
+R040,PM,250-499,Yes,Yes,No,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,No,No,Yes,No,4,5,0,3,Version control for research artifacts,Familiar and planning to use,Yes,No,0,
+R041,Designer,500-999,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,Yes,No,Yes,Yes,Yes,0,3,0,5,Automated tagging and categorization of research data,Familiar and have used,No,Yes,0,
+R042,Engineer,1000-1999,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R043,Researcher,100-249,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,Yes,5,5,5,4,Better quantitative and qualitative data integration,Familiar and have used,Yes,Yes,5,Support for longitudinal studies
+R044,PM,50-99,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,1,2,3,4,Tools feel disconnected and don't work well together,Familiar and have used,Yes,Yes,1,Major overhaul needed for enterprise scalability
+R045,Designer,2-49,Yes,No,Yes,No,No,Yes,No,Yes,No,No,No,Yes,No,Yes,No,No,0,4,0,5,More design pattern recognition capabilities,Never heard of,No,No,0,
+R046,Developer,250-499,No,No,No,Yes,Yes,No,No,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R047,Researcher,500-999,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,More AI-powered insight generation from unstructured data,Familiar and have used,Yes,Yes,5,Better support for mixed-methods research
+R048,PM,1000-1999,Yes,Yes,Yes,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,4,4,4,0,Better cross-team collaboration features,Familiar and have used,Yes,Yes,4,Integration with product analytics platforms
+R049,Engineer,100-249,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,No,No,No,Yes,No,0,0,0,2,Need better developer documentation,Familiar but never used,No,No,0,
+R050,Designer,50-99,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,4,5,4,5,More AI suggestions for research methodologies,Familiar and have used,Yes,Yes,4,Better template library for common scenarios
+R051,Researcher,2-49,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,Everything is great - just want more AI features,Familiar and have used,Yes,Yes,5,More advanced natural language processing
+R052,Developer,250-499,No,Yes,No,Yes,No,No,Yes,No,Yes,No,No,No,No,No,No,No,0,0,0,0,,Never heard of,No,No,0,
+R053,PM,500-999,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,Yes,3,4,5,4,Better integration with CRM and customer data platforms,Familiar and have used,Yes,Yes,3,Improved performance and speed
+R054,Designer,1000-1999,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,Yes,No,Yes,Yes,No,0,2,0,3,Tools are not intuitive and have steep learning curve,Familiar and planning to use,No,Yes,0,
+R055,Engineer,100-249,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R056,Researcher,50-99,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,Better support for accessibility research and testing,Familiar and have used,Yes,Yes,5,More inclusive design research capabilities
+R057,PM,2-49,Yes,Yes,No,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,No,Yes,No,No,3,5,0,4,More budget-friendly options for small teams,Familiar and planning to use,Yes,No,0,
+R058,Designer,250-499,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,4,4,5,5,Better version control and change tracking,Familiar and have used,Yes,Yes,4,Stronger permissions and access control
+R059,Developer,500-999,No,No,No,Yes,Yes,No,No,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Familiar but never used,No,No,0,
+R060,Researcher,1000-1999,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,Yes,5,5,5,4,AI-powered synthesis of qualitative and quantitative data,Familiar and have used,Yes,Yes,5,Better handling of sensitive participant data
+R061,Engineer,100-249,Yes,Yes,No,Yes,No,Yes,Yes,No,Yes,No,No,No,No,Yes,No,No,0,0,0,3,Better code integration examples,Familiar and planning to use,No,No,0,
+R062,PM,50-99,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,2,3,4,5,Too many separate tools - need unified platform,Familiar and have used,Yes,Yes,2,Complete platform consolidation
+R063,Designer,2-49,Yes,No,Yes,No,No,Yes,No,Yes,No,No,No,Yes,No,Yes,No,No,0,5,0,5,Would love AI-generated personas from research data,Familiar but never used,No,Yes,0,
+R064,Researcher,250-499,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,4,5,5,5,More automated analysis of open-ended responses,Familiar and have used,Yes,Yes,4,Better pattern recognition in qualitative data
+R065,Developer,500-999,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R066,PM,1000-1999,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,4,5,Better roadmap prioritization from research insights,Familiar and have used,Yes,Yes,5,AI recommendations for follow-up research
+R067,Designer,100-249,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,4,4,4,4,More design thinking workshop facilitation tools,Familiar and have used,Yes,Yes,4,Better whiteboarding and ideation features
+R068,Engineer,50-99,No,No,No,Yes,Yes,No,No,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Never heard of,No,No,0,
+R069,Researcher,2-49,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,More AI assistance in research protocol design,Familiar and have used,Yes,Yes,5,Better participant screening and recruitment tools
+R070,PM,250-499,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No,No,Yes,No,3,0,0,4,Better alignment between research and product development,Familiar and planning to use,No,No,0,
+R071,Designer,500-999,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,Yes,No,Yes,Yes,Yes,0,4,0,5,More AI-generated user journey maps,Familiar and have used,No,Yes,0,
+R072,Developer,1000-1999,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Familiar but never used,No,No,0,
+R073,Researcher,100-249,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,Better longitudinal study tracking and analysis,Familiar and have used,Yes,Yes,5,Support for diary studies and experience sampling
+R074,PM,50-99,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,No,4,5,5,0,Better OKR alignment from research insights,Familiar and have used,Yes,Yes,4,AI-powered research prioritization
+R075,Designer,2-49,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,Yes,No,Yes,Yes,No,0,3,0,4,More prototyping tools integrated with research,Familiar and planning to use,No,No,0,
+R076,Engineer,250-499,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,No,No,Yes,No,No,0,0,0,3,Better API documentation and SDKs,Familiar and have used,No,No,0,
+R077,Researcher,500-999,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,Yes,5,5,0,5,More automated insight extraction from interviews,Familiar and have used,Yes,Yes,5,Better transcription and analysis accuracy
+R078,PM,1000-1999,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,3,4,5,5,Need better executive summary generation,Familiar and have used,Yes,Yes,3,More customizable reporting templates
+R079,Designer,100-249,Yes,Yes,Yes,No,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,Yes,Yes,No,4,5,4,5,Better user testing and validation tools,Familiar and have used,Yes,Yes,4,Integration with design collaboration tools
+R080,Developer,50-99,No,Yes,No,Yes,No,No,Yes,No,Yes,No,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R081,Researcher,2-49,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,Everything is excellent - keep improving AI capabilities,Familiar and have used,Yes,Yes,5,More industry-specific templates
+R082,PM,250-499,Yes,Yes,No,No,Yes,Yes,Yes,No,No,Yes,Yes,Yes,No,Yes,Yes,No,2,4,0,3,Tools lack proper change management features,Familiar and planning to use,Yes,No,0,
+R083,Designer,500-999,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,Yes,No,Yes,Yes,No,0,4,0,5,Better competitor analysis and benchmarking,Familiar and have used,No,Yes,0,
+R084,Engineer,1000-1999,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Never heard of,No,No,0,
+R085,Researcher,100-249,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,More automated theme identification in qualitative research,Familiar and have used,Yes,Yes,5,Better support for mixed-methods analysis
+R086,PM,50-99,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,Yes,4,5,5,4,Better integration with agile project management,Familiar and have used,Yes,Yes,4,More stakeholder management features
+R087,Designer,2-49,Yes,No,Yes,No,No,Yes,No,Yes,No,No,No,Yes,No,Yes,No,No,0,3,0,4,More AI-powered usability heuristic evaluation,Familiar and planning to use,No,No,0,
+R088,Developer,250-499,No,No,No,Yes,Yes,No,No,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Familiar but never used,No,No,0,
+R089,Researcher,500-999,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,Better support for ethnographic research methods,Familiar and have used,Yes,Yes,5,More cultural research frameworks
+R090,PM,1000-1999,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No,No,Yes,Yes,3,0,0,4,Better metrics dashboard for tracking research impact,Familiar and have used,No,No,0,
+R091,Designer,100-249,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,4,5,4,5,More AI-assisted prototyping from research insights,Familiar and have used,Yes,Yes,4,Better design system integration
+R092,Engineer,50-99,Yes,Yes,No,Yes,No,Yes,Yes,No,Yes,No,No,No,No,Yes,No,No,0,0,0,3,More technical documentation for integrations,Familiar and planning to use,No,No,0,
+R093,Researcher,2-49,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,5,5,5,5,Better statistical significance testing built-in,Familiar and have used,Yes,Yes,5,More advanced quantitative analysis tools
+R094,PM,250-499,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,Yes,No,1,3,5,5,Primary research tools are unreliable and buggy,Familiar and have used,Yes,Yes,1,Complete rebuild of primary research capabilities
+R095,Designer,500-999,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,Yes,No,Yes,Yes,No,0,4,0,5,More accessibility testing automation,Familiar and planning to use,No,Yes,0,
+R096,Developer,1000-1999,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Heard of but not familiar,No,No,0,
+R097,Researcher,100-249,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,No,Yes,Yes,Yes,Yes,Yes,No,Yes,5,5,5,4,More automated participant outreach and follow-up,Familiar and have used,Yes,Yes,5,Better calendar integration for scheduling
+R098,PM,50-99,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,4,4,4,4,More executive-friendly visualizations and reports,Familiar and have used,Yes,Yes,4,Better storytelling tools for research findings
+R099,Designer,2-49,Yes,No,Yes,No,No,Yes,No,Yes,No,No,No,Yes,No,Yes,Yes,No,0,5,0,5,Love the tools - want more AI creative suggestions,Familiar and have used,No,Yes,0,
+R100,Engineer,250-499,No,Yes,No,Yes,Yes,No,Yes,No,Yes,Yes,No,No,No,No,No,No,0,0,0,0,,Familiar but never used,No,No,0,

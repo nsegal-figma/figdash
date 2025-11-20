@@ -1,11 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
+import { ScrollToTop } from './components/ScrollToTop';
 import { Upload, Dashboard, Insights } from './pages';
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
+      <ScrollToTop />
+      <div className="min-h-screen bg-white">
         <Navigation />
         <Routes>
           <Route path="/" element={<Upload />} />

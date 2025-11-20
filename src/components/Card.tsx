@@ -23,12 +23,12 @@ export function Card({
     lg: 'p-8',
   };
 
-  const hoverStyles = hover ? 'hover:shadow-lg cursor-pointer' : '';
+  const hoverStyles = hover ? 'hover:border-gray-300 cursor-pointer' : '';
   const clickable = onClick ? 'cursor-pointer' : '';
 
   return (
     <motion.div
-      className={`bg-white rounded-lg shadow-md transition-all duration-150 ${paddingStyles[padding]} ${hoverStyles} ${clickable} ${className}`}
+      className={`rounded-lg border border-gray-200 bg-white transition-all duration-150 ${paddingStyles[padding]} ${hoverStyles} ${clickable} ${className}`}
       onClick={onClick}
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
@@ -38,6 +38,7 @@ export function Card({
     </motion.div>
   );
 }
+
 
 
 

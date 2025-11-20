@@ -24,10 +24,10 @@ export function Button({
   const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none';
 
   const variantStyles = {
-    primary: 'bg-primary-500 text-white hover:bg-primary-600 active:scale-[0.98] focus:ring-primary-500 shadow-md hover:shadow-lg',
-    secondary: 'bg-white text-gray-700 border border-gray-300 hover:border-gray-400 hover:bg-gray-50 active:scale-[0.98] focus:ring-primary-500 shadow-sm hover:shadow-md',
-    ghost: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:scale-[0.98] focus:ring-primary-500',
-    danger: 'bg-error text-white hover:bg-error-dark active:scale-[0.98] focus:ring-error shadow-md hover:shadow-lg'
+    primary: 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98] focus:ring-gray-900 border border-gray-900',
+    secondary: 'bg-white text-gray-900 border border-gray-300 hover:border-gray-400 hover:bg-gray-50 active:scale-[0.98] focus:ring-gray-900',
+    ghost: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:scale-[0.98] focus:ring-gray-900',
+    danger: 'bg-error text-white hover:bg-error-dark active:scale-[0.98] focus:ring-error border border-error'
   };
 
   const sizeStyles = {
@@ -74,6 +74,7 @@ export function Button({
     </motion.button>
   );
 }
+
 
 
 
