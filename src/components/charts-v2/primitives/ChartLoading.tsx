@@ -30,7 +30,6 @@ export interface ChartLoadingProps {
 export function ChartLoading({
   width = '100%',
   height = 400,
-  variant = 'generic',
 }: ChartLoadingProps) {
   const containerStyle: React.CSSProperties = {
     width: typeof width === 'number' ? `${width}px` : width,
