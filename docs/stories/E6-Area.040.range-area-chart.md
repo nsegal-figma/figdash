@@ -3,7 +3,7 @@ id: VIZ-040
 title: "Range Area Chart"
 type: Story
 epic: E6-Area
-status: Draft
+status: Completed
 priority: Low
 storyPoints: 3
 sprint: 5

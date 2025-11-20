@@ -119,7 +119,6 @@ export function LineChartV2({
   fillArea = false,
   areaOpacity = 0.3,
   referenceLines = [],
-  crosshair = false,
   sparkline = false,
 }: LineChartV2Props) {
   // Normalize yKeys to array

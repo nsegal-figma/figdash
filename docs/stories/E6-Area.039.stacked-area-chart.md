@@ -3,7 +3,7 @@ id: VIZ-039
 title: "Stacked Area Chart"
 type: Story
 epic: E6-Area
-status: Draft
+status: Completed
 priority: Medium
 storyPoints: 5
 sprint: 5
