@@ -53,7 +53,7 @@ export function Insights() {
   if (!surveyData) {
     return (
       <div className="min-h-screen bg-white py-12 px-6">
-        <div className="mx-auto max-w-7xl">
+        <div>
           <EmptyState
             icon={<FileText className="h-12 w-12" />}
             title="No Survey Data"
@@ -72,7 +72,7 @@ export function Insights() {
   if (textAnalytics.length === 0) {
     return (
       <div className="min-h-screen bg-white py-12 px-6">
-        <div className="mx-auto max-w-7xl">
+        <div>
           <EmptyState
             icon={<FileText className="h-12 w-12" />}
             title="No Text Data Found"
@@ -90,7 +90,7 @@ export function Insights() {
 
   return (
     <div className="min-h-screen bg-white py-12 px-6">
-      <div className="mx-auto max-w-7xl">
+      <div>
         {/* Header */}
         <div className="mb-10 border-b border-gray-200 pb-6">
           <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Text Insights</h1>

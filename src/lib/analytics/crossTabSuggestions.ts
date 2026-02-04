@@ -95,10 +95,20 @@ export function suggestCrossTabs(surveyData: SurveyData): CrossTabSuggestion[] {
       const col1 = categoricalColumns[i];
       const col2 = categoricalColumns[j];
 
-      const values1 = surveyData.rows.map(r => r[col1.name]).filter(v => v);
-      const values2 = surveyData.rows.map(r => r[col2.name]).filter(v => v);
+      // Get paired observations (only rows where both values exist)
+      const pairedValues: { val1: string | number; val2: string | number }[] = [];
+      surveyData.rows.forEach(r => {
+        const v1 = r[col1.name];
+        const v2 = r[col2.name];
+        if (v1 && v2) {
+          pairedValues.push({ val1: v1, val2: v2 });
+        }
+      });
 
-      if (values1.length === 0 || values2.length === 0) continue;
+      if (pairedValues.length < 10) continue; // Need minimum sample size
+
+      const values1 = pairedValues.map(p => p.val1);
+      const values2 = pairedValues.map(p => p.val2);
 
       // Create contingency table
       const { table } = createContingencyTable(values1, values2);
@@ -106,8 +116,8 @@ export function suggestCrossTabs(surveyData: SurveyData): CrossTabSuggestion[] {
       // Skip if table is too small or has no variance
       if (table.length < 2 || table[0].length < 2) continue;
 
-      // Calculate Cramér's V
-      const cramersV = calculateCramersV(table, surveyData.totalRows);
+      // Calculate Cramér's V using actual paired observation count
+      const cramersV = Math.min(calculateCramersV(table, pairedValues.length), 1.0);
 
       // Generate insight
       let insight = '';

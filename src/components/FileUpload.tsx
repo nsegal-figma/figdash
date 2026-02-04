@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { Upload, X, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export interface FileUploadProps {
   onFileSelect: (file: File) => void;
+  onFileRemove?: () => void;
   accept?: string;
   maxSize?: number; // in MB
   className?: string;
@@ -11,6 +12,7 @@ export interface FileUploadProps {
 
 export function FileUpload({
   onFileSelect,
+  onFileRemove,
   accept = '.csv',
   maxSize = 10,
   className = '',
@@ -18,6 +20,7 @@ export function FileUpload({
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const validateFile = (file: File): boolean => {
     setError('');
@@ -75,6 +78,11 @@ export function FileUpload({
   const clearFile = () => {
     setSelectedFile(null);
     setError('');
+    // Reset the file input so the same file can be uploaded again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    onFileRemove?.();
   };
 
   return (
@@ -94,10 +102,13 @@ export function FileUpload({
         }`}
       >
         <input
+          ref={fileInputRef}
           type="file"
           accept={accept}
           onChange={handleFileInput}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          className={`absolute inset-0 w-full h-full opacity-0 ${
+            selectedFile ? 'pointer-events-none' : 'cursor-pointer'
+          }`}
           id="file-upload"
         />
 
@@ -108,7 +119,7 @@ export function FileUpload({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="flex flex-col items-center"
+              className="relative z-10 flex flex-col items-center pointer-events-auto"
             >
               <FileText className="h-12 w-12 text-success mb-3" />
               <p className="text-sm font-medium text-gray-900 mb-1">
@@ -120,9 +131,10 @@ export function FileUpload({
               <button
                 onClick={(e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   clearFile();
                 }}
-                className="inline-flex items-center gap-1 text-sm text-error hover:text-error-dark"
+                className="relative z-10 inline-flex items-center gap-1 text-sm text-error hover:text-error-dark pointer-events-auto"
               >
                 <X className="h-4 w-4" />
                 Remove
@@ -163,6 +175,7 @@ export function FileUpload({
     </div>
   );
 }
+
 
 
 

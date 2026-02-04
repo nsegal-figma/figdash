@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, type HTMLMotionProps } from 'framer-motion';
+import { useChartTheme } from '../hooks/useChartTheme';
 
 export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -19,16 +20,12 @@ export function Button({
   children,
   icon,
   loading = false,
+  style,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none';
+  const { theme } = useChartTheme();
 
-  const variantStyles = {
-    primary: 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98] focus:ring-gray-900 border border-gray-900',
-    secondary: 'bg-white text-gray-900 border border-gray-300 hover:border-gray-400 hover:bg-gray-50 active:scale-[0.98] focus:ring-gray-900',
-    ghost: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:scale-[0.98] focus:ring-gray-900',
-    danger: 'bg-error text-white hover:bg-error-dark active:scale-[0.98] focus:ring-error border border-error'
-  };
+  const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none';
 
   const sizeStyles = {
     sm: 'px-3 py-1.5 text-sm h-8',
@@ -37,6 +34,38 @@ export function Button({
   };
 
   const widthStyle = fullWidth ? 'w-full' : '';
+
+  // Theme-aware variant styles
+  const getVariantStyle = () => {
+    switch (variant) {
+      case 'primary':
+        return {
+          backgroundColor: theme.colors.textPrimary,
+          color: theme.colors.cardBackground,
+          borderColor: theme.colors.textPrimary,
+        };
+      case 'secondary':
+        return {
+          backgroundColor: theme.colors.cardBackground,
+          color: theme.colors.textPrimary,
+          borderColor: theme.colors.borderColor,
+        };
+      case 'ghost':
+        return {
+          backgroundColor: 'transparent',
+          color: theme.colors.textSecondary,
+          borderColor: 'transparent',
+        };
+      case 'danger':
+        return {
+          backgroundColor: '#dc2626',
+          color: '#ffffff',
+          borderColor: '#dc2626',
+        };
+      default:
+        return {};
+    }
+  };
 
   const spinner = (
     <svg
@@ -63,7 +92,8 @@ export function Button({
 
   return (
     <motion.button
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyle} ${className}`}
+      className={`${baseStyles} ${sizeStyles[size]} ${widthStyle} border hover:opacity-90 ${className}`}
+      style={{ ...getVariantStyle(), ...style }}
       disabled={disabled || loading}
       whileTap={!disabled && !loading ? { scale: 0.98 } : undefined}
       transition={{ duration: 0.1 }}
@@ -74,6 +104,7 @@ export function Button({
     </motion.button>
   );
 }
+
 
 
 

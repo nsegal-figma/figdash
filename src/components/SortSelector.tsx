@@ -1,8 +1,10 @@
 import { ArrowDownNarrowWide, ArrowUpNarrowWide } from 'lucide-react';
 import { useSurveyStore } from '../stores/useSurveyStore';
+import { useChartTheme } from '../hooks/useChartTheme';
 
 export function SortSelector() {
   const { sortOrder, setSortOrder } = useSurveyStore();
+  const { theme, styles } = useChartTheme();
 
   const toggleSort = () => {
     setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
@@ -11,7 +13,15 @@ export function SortSelector() {
   return (
     <button
       onClick={toggleSort}
-      className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+      className="inline-flex items-center gap-2 rounded-md border px-3 py-2 transition-colors hover:opacity-80"
+      style={{
+        fontFamily: styles.fontFamily,
+        fontSize: styles.labelFontSize,
+        fontWeight: 500,
+        borderColor: theme.colors.borderColor,
+        backgroundColor: theme.colors.cardBackground,
+        color: theme.colors.textPrimary,
+      }}
       title={sortOrder === 'desc' ? 'Sort: High to Low' : 'Sort: Low to High'}
     >
       {sortOrder === 'desc' ? (

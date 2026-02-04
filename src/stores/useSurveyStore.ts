@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import type { SurveyData } from '../types/survey';
 import { DEFAULT_PALETTE, type ColorPalette } from '../lib/colorPalettes';
 import type { AISummaryResponse } from '../lib/ai/openai';
+import type { Insight } from '../lib/ai/insightDiscovery';
+import type { ExecutiveSummary } from '../lib/ai/executiveSummary';
+import type { CleaningReport, CleaningSettings, CleaningMode } from '../types/cleaning';
 
 export type SortOrder = 'desc' | 'asc';
 
@@ -16,6 +19,17 @@ interface SurveyStore {
   filters: Map<string, string[]>; // columnName -> selected values
   customTitles: Map<string, string>; // columnName -> custom title
   figmaToken: string | null;
+  insights: Insight[];
+  executiveSummary: ExecutiveSummary | null;
+  isGeneratingInsights: boolean;
+
+  // Data Cleaning
+  originalData: SurveyData | null;
+  cleaningReport: CleaningReport | null;
+  cleaningSettings: CleaningSettings | null;
+  cleaningMode: CleaningMode | null;
+  isCleaningInProgress: boolean;
+
   setSurveyData: (data: SurveyData) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -29,6 +43,18 @@ interface SurveyStore {
   setCustomTitle: (columnName: string, title: string) => void;
   clearCustomTitle: (columnName: string) => void;
   setFigmaToken: (token: string | null) => void;
+  setInsights: (insights: Insight[]) => void;
+  setExecutiveSummary: (summary: ExecutiveSummary) => void;
+  setIsGeneratingInsights: (isGenerating: boolean) => void;
+
+  // Data Cleaning Actions
+  setOriginalData: (data: SurveyData) => void;
+  setCleaningReport: (report: CleaningReport | null) => void;
+  setCleaningSettings: (settings: CleaningSettings | null) => void;
+  setCleaningMode: (mode: CleaningMode | null) => void;
+  setIsCleaningInProgress: (isInProgress: boolean) => void;
+  revertToOriginal: () => void;
+
   clearSurvey: () => void;
 }
 
@@ -43,6 +69,16 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   filters: new Map(),
   customTitles: new Map(),
   figmaToken: localStorage.getItem('figma_token') || null,
+  insights: [],
+  executiveSummary: null,
+  isGeneratingInsights: false,
+
+  // Data Cleaning State
+  originalData: null,
+  cleaningReport: null,
+  cleaningSettings: null,
+  cleaningMode: null,
+  isCleaningInProgress: false,
   setSurveyData: (data) => set({ surveyData: data, error: null }),
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error, isLoading: false }),
@@ -92,8 +128,41 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
     }
     set({ figmaToken: token });
   },
-  clearSurvey: () => set({ surveyData: null, error: null, isLoading: false, aiSummaries: new Map(), filters: new Map(), customTitles: new Map() }),
+  setInsights: (insights) => set({ insights }),
+  setExecutiveSummary: (summary) => set({ executiveSummary: summary }),
+  setIsGeneratingInsights: (isGenerating) => set({ isGeneratingInsights: isGenerating }),
+
+  // Data Cleaning Actions
+  setOriginalData: (data) => set({ originalData: data }),
+  setCleaningReport: (report) => set({ cleaningReport: report }),
+  setCleaningSettings: (settings) => set({ cleaningSettings: settings }),
+  setCleaningMode: (mode) => set({ cleaningMode: mode }),
+  setIsCleaningInProgress: (isInProgress) => set({ isCleaningInProgress: isInProgress }),
+  revertToOriginal: () =>
+    set((state) => ({
+      surveyData: state.originalData,
+      cleaningReport: null,
+      cleaningSettings: null,
+    })),
+
+  clearSurvey: () =>
+    set({
+      surveyData: null,
+      error: null,
+      isLoading: false,
+      aiSummaries: new Map(),
+      filters: new Map(),
+      customTitles: new Map(),
+      insights: [],
+      executiveSummary: null,
+      originalData: null,
+      cleaningReport: null,
+      cleaningSettings: null,
+      cleaningMode: null,
+      isCleaningInProgress: false,
+    }),
 }));
+
 
 
 

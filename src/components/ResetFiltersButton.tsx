@@ -1,8 +1,10 @@
 import { FilterX } from 'lucide-react';
 import { useSurveyStore } from '../stores/useSurveyStore';
+import { useChartTheme } from '../hooks/useChartTheme';
 
 export function ResetFiltersButton() {
   const { filters, clearAllFilters } = useSurveyStore();
+  const { theme, styles } = useChartTheme();
   const hasFilters = filters.size > 0;
 
   if (!hasFilters) return null;
@@ -10,11 +12,28 @@ export function ResetFiltersButton() {
   return (
     <button
       onClick={clearAllFilters}
-      className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+      className="inline-flex items-center gap-2 rounded-md border px-3 py-2 transition-colors hover:opacity-80"
+      style={{
+        fontFamily: styles.fontFamily,
+        fontSize: styles.labelFontSize,
+        fontWeight: 500,
+        borderColor: theme.colors.borderColor,
+        backgroundColor: theme.colors.cardBackground,
+        color: theme.colors.textPrimary,
+      }}
     >
       <FilterX className="h-4 w-4" />
       Reset Filters
-      <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-semibold text-gray-900">
+      <span
+        className="rounded-md px-1.5 py-0.5"
+        style={{
+          fontFamily: styles.fontFamily,
+          fontSize: styles.axisTickFontSize,
+          fontWeight: 600,
+          backgroundColor: theme.colors.borderColor,
+          color: theme.colors.textPrimary,
+        }}
+      >
         {filters.size}
       </span>
     </button>

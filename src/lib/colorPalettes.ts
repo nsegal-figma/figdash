@@ -69,7 +69,8 @@ export function generateColorsFromPalette(palette: ColorPalette, count: number):
 
 /**
  * Generate gradient colors for data items based on their values
- * Colors go from lightest (lowest value) to darkest (highest value)
+ * Colors go from medium (lowest value) to darkest (highest value)
+ * Skips the lightest colors to ensure accessibility (WCAG AA compliance)
  * Regardless of sort order, highest values ALWAYS get darkest colors
  */
 export function generateGradientColors(
@@ -78,6 +79,10 @@ export function generateGradientColors(
   _sortOrder: 'asc' | 'desc'
 ): string[] {
   const colors = palette.colors;
+
+  // Skip the 2 lightest colors for accessibility - they don't have enough contrast
+  // Use only colors[2] through colors[7] (indices 2-7 out of 8)
+  const accessibleColors = colors.slice(2);
 
   // Find min and max values to normalize
   const values = dataItems.map(item => item.value);
@@ -88,16 +93,16 @@ export function generateGradientColors(
   // Map each value to a color based on its magnitude (not position)
   return dataItems.map((item) => {
     if (range === 0) {
-      // All values are the same, use middle color
-      return colors[Math.floor(colors.length / 2)];
+      // All values are the same, use middle color from accessible range
+      return accessibleColors[Math.floor(accessibleColors.length / 2)];
     }
 
     // Normalize value to 0-1 range
     const normalized = (item.value - minValue) / range;
 
-    // Map to color index: 0 (lowest) = lightest, 1 (highest) = darkest
-    const colorIndex = Math.floor(normalized * (colors.length - 1));
+    // Map to color index in accessible range: 0 (lowest) = medium, 1 (highest) = darkest
+    const colorIndex = Math.floor(normalized * (accessibleColors.length - 1));
 
-    return colors[colorIndex];
+    return accessibleColors[colorIndex];
   });
 }

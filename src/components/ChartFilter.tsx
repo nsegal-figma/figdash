@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Filter, X } from 'lucide-react';
 import { useSurveyStore } from '../stores/useSurveyStore';
+import { useChartTheme } from '../hooks/useChartTheme';
 
 interface ChartFilterProps {
   columnName: string;
@@ -9,6 +10,7 @@ interface ChartFilterProps {
 
 export function ChartFilter({ columnName, availableValues }: ChartFilterProps) {
   const { filters, setFilter, clearFilter } = useSurveyStore();
+  const { theme, styles } = useChartTheme();
   const [isOpen, setIsOpen] = useState(false);
 
   const currentFilter = filters.get(columnName) || [];
@@ -32,21 +34,26 @@ export function ChartFilter({ columnName, availableValues }: ChartFilterProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors ${
-          hasFilter
-            ? 'border-gray-900 bg-gray-50 text-gray-900'
-            : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-        }`}
+        className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 transition-colors hover:opacity-80"
+        style={{
+          fontFamily: styles.fontFamily,
+          fontSize: styles.axisTickFontSize,
+          fontWeight: 500,
+          borderColor: hasFilter ? theme.colors.textPrimary : theme.colors.borderColor,
+          backgroundColor: theme.colors.cardBackground,
+          color: hasFilter ? theme.colors.textPrimary : theme.colors.textSecondary,
+        }}
       >
         <Filter className="h-3 w-3" />
         Filter
         {hasFilter && (
           <>
-            <span className="text-gray-400">·</span>
+            <span style={{ color: theme.colors.textMuted }}>·</span>
             <span>{currentFilter.length}</span>
             <button
               onClick={handleClear}
-              className="ml-1 text-gray-500 hover:text-gray-700"
+              className="ml-1 hover:opacity-70"
+              style={{ color: theme.colors.textMuted }}
             >
               <X className="h-3 w-3" />
             </button>
@@ -63,13 +70,33 @@ export function ChartFilter({ columnName, availableValues }: ChartFilterProps) {
           />
 
           {/* Dropdown */}
-          <div className="absolute left-0 top-full z-20 mt-1 w-64 rounded-md border border-gray-200 bg-white p-3 shadow-lg">
+          <div
+            className="absolute right-0 top-full z-20 mt-1 w-64 rounded-md border p-3 shadow-lg"
+            style={{
+              borderColor: theme.colors.borderColor,
+              backgroundColor: theme.colors.cardBackground,
+            }}
+          >
             <div className="mb-3 flex items-center justify-between">
-              <h4 className="text-xs font-medium text-gray-900">Show only:</h4>
+              <h4
+                style={{
+                  fontFamily: styles.fontFamily,
+                  fontSize: styles.axisTickFontSize,
+                  fontWeight: 500,
+                  color: theme.colors.textPrimary,
+                }}
+              >
+                Show only:
+              </h4>
               {hasFilter && (
                 <button
                   onClick={handleClear}
-                  className="text-xs text-gray-500 hover:text-gray-700"
+                  className="hover:opacity-70"
+                  style={{
+                    fontFamily: styles.fontFamily,
+                    fontSize: styles.axisTickFontSize,
+                    color: theme.colors.textMuted,
+                  }}
                 >
                   Clear
                 </button>
@@ -82,11 +109,15 @@ export function ChartFilter({ columnName, availableValues }: ChartFilterProps) {
                   <button
                     key={value}
                     onClick={() => toggleValue(value)}
-                    className={`rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                      isSelected
-                        ? 'border-gray-900 bg-gray-900 text-white'
-                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50'
-                    }`}
+                    className="rounded-md border px-2.5 py-1.5 transition-colors hover:opacity-80"
+                    style={{
+                      fontFamily: styles.fontFamily,
+                      fontSize: styles.axisTickFontSize,
+                      fontWeight: 500,
+                      borderColor: isSelected ? theme.colors.textPrimary : theme.colors.borderColor,
+                      backgroundColor: isSelected ? theme.colors.textPrimary : theme.colors.cardBackground,
+                      color: isSelected ? theme.colors.cardBackground : theme.colors.textSecondary,
+                    }}
                   >
                     {value}
                   </button>

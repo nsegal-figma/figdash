@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Download } from 'lucide-react';
 import { useChartImageExport } from '../hooks/useChartImageExport';
+import { useChartTheme } from '../hooks/useChartTheme';
 
 interface ChartExportButtonProps {
   chartId: string;
@@ -10,6 +11,7 @@ interface ChartExportButtonProps {
 export function ChartExportButton({ chartId, chartTitle }: ChartExportButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { exportChartAsImage } = useChartImageExport();
+  const { theme, styles } = useChartTheme();
 
   const handleExport = async (includeTable: boolean) => {
     const fileName = `${chartTitle.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
@@ -21,7 +23,15 @@ export function ChartExportButton({ chartId, chartTitle }: ChartExportButtonProp
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
+        className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 transition-colors hover:opacity-80"
+        style={{
+          fontFamily: styles.fontFamily,
+          fontSize: styles.axisTickFontSize,
+          fontWeight: 500,
+          borderColor: theme.colors.borderColor,
+          backgroundColor: theme.colors.cardBackground,
+          color: theme.colors.textSecondary,
+        }}
         data-export-exclude
       >
         <Download className="h-3 w-3" />
@@ -37,16 +47,32 @@ export function ChartExportButton({ chartId, chartTitle }: ChartExportButtonProp
           />
 
           {/* Dropdown */}
-          <div className="absolute right-0 top-full z-20 mt-1 w-48 rounded-md border border-gray-200 bg-white py-1 shadow-lg">
+          <div
+            className="absolute right-0 top-full z-20 mt-1 w-48 rounded-md border py-1 shadow-lg"
+            style={{
+              borderColor: theme.colors.borderColor,
+              backgroundColor: theme.colors.cardBackground,
+            }}
+          >
             <button
               onClick={() => handleExport(false)}
-              className="w-full px-3 py-2 text-left text-xs text-gray-700 hover:bg-gray-50"
+              className="w-full px-3 py-2 text-left hover:opacity-80"
+              style={{
+                fontFamily: styles.fontFamily,
+                fontSize: styles.axisTickFontSize,
+                color: theme.colors.textSecondary,
+              }}
             >
               Chart only
             </button>
             <button
               onClick={() => handleExport(true)}
-              className="w-full px-3 py-2 text-left text-xs text-gray-700 hover:bg-gray-50"
+              className="w-full px-3 py-2 text-left hover:opacity-80"
+              style={{
+                fontFamily: styles.fontFamily,
+                fontSize: styles.axisTickFontSize,
+                color: theme.colors.textSecondary,
+              }}
             >
               Chart + Data Table
             </button>

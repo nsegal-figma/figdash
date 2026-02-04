@@ -6,21 +6,37 @@
 import { useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSurveyStore } from '../stores/useSurveyStore';
+import { useChartTheme } from '../hooks/useChartTheme';
 import { EmptyState, Button } from '../components';
-import { PaletteSelector } from '../components/PaletteSelector';
 import { SortSelector } from '../components/SortSelector';
 import { ChartFilter } from '../components/ChartFilter';
 import { ChartExportButton } from '../components/ChartExportButton';
 import { CopyChartButton } from '../components/CopyChartButton';
 import { EditableChartTitle } from '../components/EditableChartTitle';
 import { ResetFiltersButton } from '../components/ResetFiltersButton';
+import { KeyFindings } from '../components/KeyFindings';
 import { CrossTabBuilder } from '../components/CrossTabBuilder';
+import { ThemeEditorButton } from '../components/ThemeEditor';
 import { generateAllVisualizations } from '../lib/analytics/advanced';
 import { generateGradientColors } from '../lib/colorPalettes';
 import { FileText, Upload as UploadIcon, Download } from 'lucide-react';
 import { usePDFExport } from '../hooks/usePDFExport';
+import { formatFileName } from '../utils/csvParser';
+import type { ChartTheme } from '../types/chartTheme';
 
-// Simple Horizontal Bar Component with axis and tooltip
+// Themed Horizontal Bar Component with axis and tooltip
+interface HorizontalBarProps {
+  label: string;
+  value: number;
+  maxValue: number;
+  totalN: number;
+  color: string;
+  showLabel?: boolean;
+  showAxis?: boolean;
+  theme: ChartTheme;
+  styles: ReturnType<typeof import('../lib/themes').computeThemeStyles>;
+}
+
 function HorizontalBar({
   label,
   value,
@@ -29,58 +45,149 @@ function HorizontalBar({
   color,
   showLabel = true,
   showAxis = false,
-}: {
-  label: string;
-  value: number;
-  maxValue: number;
-  totalN: number;
-  color: string;
-  showLabel?: boolean;
-  showAxis?: boolean;
-}) {
+  theme,
+  styles,
+}: HorizontalBarProps) {
   const percentage = (value / maxValue) * 100;
   const percentOfTotal = (value / totalN) * 100;
 
+  // Generate axis labels based on theme's axisDivisions
+  const getAxisLabels = () => {
+    const divisions = theme.grid.axisDivisions;
+    const labels = [];
+    for (let i = 0; i <= divisions; i++) {
+      labels.push(Math.round(maxValue * (i / divisions)));
+    }
+    return labels;
+  };
+
   return (
     <>
-      {showAxis && (
-        <div className="flex items-center gap-4 mb-2" data-chart-axis>
-          <div className="w-56 flex-shrink-0" />
-          <div className="flex-1 flex justify-between text-xs text-gray-400 px-1">
-            <span>0</span>
-            <span>{Math.round(maxValue * 0.25)}</span>
-            <span>{Math.round(maxValue * 0.5)}</span>
-            <span>{Math.round(maxValue * 0.75)}</span>
-            <span>{maxValue}</span>
+      {showAxis && theme.grid.showAxisTicks && (
+        <div
+          className="flex items-center gap-4"
+          style={{ marginBottom: theme.layout.barGap }}
+          data-chart-axis
+        >
+          <div style={{ width: theme.layout.labelWidth }} className="flex-shrink-0" />
+          <div
+            className="flex-1 flex justify-between px-1"
+            style={{
+              fontFamily: styles.fontFamily,
+              fontSize: styles.axisTickFontSize,
+              color: theme.colors.textMuted,
+            }}
+          >
+            {getAxisLabels().map((val, i) => (
+              <span key={i}>{val}</span>
+            ))}
           </div>
         </div>
       )}
-      <div className="flex items-center gap-4 mb-2 group">
-        <div className="w-56 text-sm text-gray-700 text-right flex-shrink-0">
+      <div
+        className="flex items-center gap-4 group"
+        style={{ marginBottom: theme.layout.barGap }}
+      >
+        <div
+          className="text-right flex-shrink-0"
+          style={{
+            width: theme.layout.labelWidth,
+            fontFamily: styles.fontFamily,
+            fontSize: styles.labelFontSize,
+            fontWeight: theme.typography.labelWeight,
+            color: theme.colors.textSecondary,
+          }}
+        >
           {label}
         </div>
         <div className="flex-1 flex items-center relative">
+          {/* Vertical Grid Lines */}
+          {theme.grid.showVerticalGrid && (
+            <div className="absolute inset-0 flex justify-between pointer-events-none">
+              {Array.from({ length: theme.grid.axisDivisions + 1 }).map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: '1px',
+                    height: '100%',
+                    backgroundColor: theme.colors.gridColor,
+                    opacity: theme.grid.gridOpacity,
+                    borderStyle: styles.gridBorderStyle,
+                  }}
+                />
+              ))}
+            </div>
+          )}
           <div
-            className="h-10 rounded-r-md relative transition-all hover:opacity-90 cursor-pointer"
+            className="relative"
             style={{
               width: `${Math.max(percentage, 3)}%`,
-              background: `linear-gradient(90deg, ${color}dd, ${color})`,
+              height: theme.layout.barHeight,
+              background: styles.getBarGradient(color),
+              borderRadius: `0 ${styles.barBorderRadius} ${styles.barBorderRadius} 0`,
+              borderWidth: theme.shapes.barBorderWidth > 0 ? theme.shapes.barBorderWidth : undefined,
+              borderColor: theme.shapes.barBorderWidth > 0 ? theme.shapes.barBorderColor : undefined,
+              borderStyle: theme.shapes.barBorderWidth > 0 ? 'solid' : undefined,
+              cursor: theme.effects.hoverCursor ? 'pointer' : 'default',
+              transition: styles.animationTransition,
             }}
-            title={`${label}: ${value} (${percentOfTotal.toFixed(1)}%)`}
+            onMouseEnter={(e) => {
+              if (theme.effects.hoverOpacity < 1) {
+                e.currentTarget.style.opacity = String(theme.effects.hoverOpacity);
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '1';
+            }}
           >
-            {showLabel && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-white">
-                {value}
+            {theme.dataLabels.showBarValues && showLabel && theme.dataLabels.valuePosition === 'inside' && (
+              <span
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+                style={{
+                  fontFamily: styles.fontFamily,
+                  fontSize: styles.valueFontSize,
+                  fontWeight: theme.typography.valueWeight,
+                  color: theme.colors.valueLabelColor,
+                }}
+              >
+                {theme.dataLabels.numberFormat === 'percentage'
+                  ? `${percentOfTotal.toFixed(theme.dataLabels.percentageDecimals)}%`
+                  : value}
               </span>
             )}
           </div>
+          {/* Value label outside bar */}
+          {theme.dataLabels.showBarValues && showLabel && theme.dataLabels.valuePosition !== 'inside' && (
+            <span
+              className="ml-2"
+              style={{
+                fontFamily: styles.fontFamily,
+                fontSize: styles.valueFontSize,
+                fontWeight: theme.typography.valueWeight,
+                color: theme.colors.textPrimary,
+              }}
+            >
+              {theme.dataLabels.numberFormat === 'percentage'
+                ? `${percentOfTotal.toFixed(theme.dataLabels.percentageDecimals)}%`
+                : value}
+            </span>
+          )}
 
           {/* Hover Tooltip */}
-          <div className="pointer-events-none absolute left-0 top-full z-10 mt-1 hidden rounded-md border border-gray-200 bg-white px-3 py-2 text-sm shadow-lg group-hover:block">
-            <div className="font-medium text-gray-900">{label}</div>
-            <div className="mt-1 text-gray-600">
+          <div
+            className="pointer-events-none absolute left-0 top-full z-10 mt-2 hidden rounded-lg bg-gray-900 px-3 py-2 shadow-xl group-hover:block"
+            style={{
+              fontFamily: styles.fontFamily,
+              fontSize: styles.labelFontSize,
+              minWidth: '120px',
+            }}
+          >
+            <div className="font-medium text-white">{label}</div>
+            <div className="mt-1 text-gray-300">
               {value} ({percentOfTotal.toFixed(1)}%)
             </div>
+            {/* Tooltip arrow */}
+            <div className="absolute -top-1 left-4 h-2 w-2 rotate-45 bg-gray-900" />
           </div>
         </div>
       </div>
@@ -90,7 +197,8 @@ function HorizontalBar({
 
 export function SurveyDashboard() {
   const navigate = useNavigate();
-  const { surveyData, selectedPalette, sortOrder, filters, customTitles } = useSurveyStore();
+  const { surveyData, sortOrder, filters, customTitles, insights, executiveSummary, isGeneratingInsights } = useSurveyStore();
+  const { theme, colorPalette, styles } = useChartTheme();
   const { exportDashboardToPDF } = usePDFExport();
 
   // Redirect to upload if no data
@@ -148,9 +256,17 @@ export function SurveyDashboard() {
       });
   }, [surveyData, sortOrder, filters, customTitles]);
 
+  const formattedFileName = useMemo(() =>
+    surveyData ? formatFileName(surveyData.fileName) : '',
+    [surveyData]
+  );
+
   if (!surveyData) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+      <div
+        className="min-h-screen flex items-center justify-center p-4"
+        style={{ backgroundColor: theme.colors.background }}
+      >
         <EmptyState
           icon={<FileText className="h-12 w-12" />}
           title="No Survey Data"
@@ -167,31 +283,73 @@ export function SurveyDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="mx-auto max-w-7xl px-6 py-12">
-
-        {/* Header */}
-        <div className="mb-10 flex items-start justify-between border-b border-gray-200 pb-6">
+    <div className="min-h-screen" style={{ backgroundColor: theme.colors.background }}>
+      {/* Sticky Header */}
+      <div
+        className="sticky top-0 z-30"
+        style={{
+          backgroundColor: theme.colors.cardBackground,
+          borderBottom: `1px solid ${theme.colors.borderColor}`,
+        }}
+      >
+        <div className="px-6 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{surveyData.fileName}</h1>
-            <p className="mt-1 text-sm text-gray-600">n={surveyData.totalRows} responses</p>
+            <h1
+              className="tracking-tight"
+              style={{
+                fontFamily: styles.fontFamily,
+                fontSize: '1.5rem',
+                fontWeight: 600,
+                color: theme.colors.textPrimary,
+              }}
+            >
+              {formattedFileName}
+            </h1>
+            <p
+              className="mt-1"
+              style={{
+                fontFamily: styles.fontFamily,
+                fontSize: styles.labelFontSize,
+                color: theme.colors.textSecondary,
+              }}
+            >
+              n={surveyData.totalRows} responses
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <ResetFiltersButton />
             <SortSelector />
-            <PaletteSelector />
+            <ThemeEditorButton />
             <button
-              onClick={() => exportDashboardToPDF(`${surveyData.fileName}-dashboard.pdf`)}
-              className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              onClick={() => exportDashboardToPDF(`${formattedFileName}-dashboard.pdf`)}
+              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 transition-colors hover:opacity-80"
+              style={{
+                fontFamily: styles.fontFamily,
+                fontSize: styles.labelFontSize,
+                fontWeight: 500,
+                backgroundColor: theme.colors.cardBackground,
+                borderColor: theme.colors.borderColor,
+                color: theme.colors.textPrimary,
+              }}
             >
               <Download className="h-4 w-4" />
               Export PDF
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="px-6 py-8">
 
         {/* Export Content Container */}
         <div data-export-content>
+          {/* Key Findings */}
+          <KeyFindings
+            insights={insights}
+            executiveSummary={executiveSummary}
+            isLoading={isGeneratingInsights}
+          />
+
           {/* Cross-Tab Builder */}
           <div className="mb-12">
             <CrossTabBuilder />
@@ -202,7 +360,17 @@ export function SurveyDashboard() {
             {analyses.map((analysis, idx) => {
               const chartId = `chart-${analysis.columnName}-${idx}`;
               return (
-            <div key={idx} className="rounded-lg border border-gray-200 bg-white p-6" data-chart-id={chartId}>
+            <div
+              key={idx}
+              className="border p-6"
+              style={{
+                backgroundColor: theme.colors.cardBackground,
+                borderColor: theme.colors.borderColor,
+                borderRadius: styles.containerBorderRadius,
+                boxShadow: styles.containerShadow,
+              }}
+              data-chart-id={chartId}
+            >
 
               {/* Question Title & Actions */}
               <div className="mb-6 flex items-start justify-between">
@@ -211,7 +379,16 @@ export function SurveyDashboard() {
                     columnName={analysis.columnName}
                     originalTitle={analysis.originalTitle}
                   />
-                  <p className="mt-0.5 text-sm text-gray-600">n={analysis.n}</p>
+                  <p
+                    className="mt-0.5"
+                    style={{
+                      fontFamily: styles.fontFamily,
+                      fontSize: styles.labelFontSize,
+                      color: theme.colors.textSecondary,
+                    }}
+                  >
+                    n={analysis.n}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2" data-export-exclude>
                   <CopyChartButton chartId={chartId} />
@@ -228,8 +405,8 @@ export function SurveyDashboard() {
               {/* Horizontal Bars */}
               <div className="mb-8">
                 {(() => {
-                  // Generate gradient colors for this chart
-                  const chartColors = generateGradientColors(selectedPalette, analysis.data, sortOrder);
+                  // Generate gradient colors for this chart using theme's color palette
+                  const chartColors = generateGradientColors(colorPalette, analysis.data, sortOrder);
 
                   return analysis.data.map((item: any, barIdx: number) => (
                     <HorizontalBar
@@ -240,31 +417,105 @@ export function SurveyDashboard() {
                       totalN={analysis.n}
                       color={chartColors[barIdx]}
                       showAxis={barIdx === 0}
+                      theme={theme}
+                      styles={styles}
                     />
                   ));
                 })()}
               </div>
 
               {/* Data Table */}
-              <div className="mt-6 border-t border-gray-200 pt-6" data-chart-table>
-                <h3 className="mb-3 text-xs font-medium uppercase tracking-wide text-gray-500">Data</h3>
+              <div
+                className="mt-6 pt-6"
+                style={{
+                  borderTop: `2px solid ${theme.colors.textMuted}40`,
+                }}
+                data-chart-table
+              >
+                <h3
+                  className="mb-3 uppercase tracking-wide"
+                  style={{
+                    fontFamily: styles.fontFamily,
+                    fontSize: styles.axisTickFontSize,
+                    fontWeight: 500,
+                    color: theme.colors.textMuted,
+                  }}
+                >
+                  Data
+                </h3>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full">
+                  <table className="min-w-full" style={{ fontFamily: styles.fontFamily }}>
                     <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Response</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Count</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">%</th>
+                      <tr style={{ borderBottom: `1px solid ${theme.colors.textMuted}30` }}>
+                        <th
+                          className="px-4 py-3 text-left uppercase"
+                          style={{
+                            fontSize: styles.axisTickFontSize,
+                            fontWeight: 500,
+                            color: theme.colors.textMuted,
+                          }}
+                        >
+                          Response
+                        </th>
+                        <th
+                          className="px-4 py-3 text-right uppercase"
+                          style={{
+                            fontSize: styles.axisTickFontSize,
+                            fontWeight: 500,
+                            color: theme.colors.textMuted,
+                          }}
+                        >
+                          Count
+                        </th>
+                        <th
+                          className="px-4 py-3 text-right uppercase"
+                          style={{
+                            fontSize: styles.axisTickFontSize,
+                            fontWeight: 500,
+                            color: theme.colors.textMuted,
+                          }}
+                        >
+                          %
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {analysis.type === 'simple' && analysis.data.map((item: any, i: number) => {
                         const pct = (item.value / analysis.n) * 100;
                         return (
-                          <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                            <td className="px-4 py-3 text-sm text-gray-900">{item.name}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900 text-right font-medium">{item.value}</td>
-                            <td className="px-4 py-3 text-sm text-gray-600 text-right">{pct.toFixed(1)}%</td>
+                          <tr
+                            key={i}
+                            className="transition-colors"
+                            style={{ borderBottom: `1px solid ${theme.colors.textMuted}15` }}
+                          >
+                            <td
+                              className="px-4 py-3"
+                              style={{
+                                fontSize: styles.labelFontSize,
+                                color: theme.colors.textPrimary,
+                              }}
+                            >
+                              {item.name}
+                            </td>
+                            <td
+                              className="px-4 py-3 text-right"
+                              style={{
+                                fontSize: styles.labelFontSize,
+                                fontWeight: 500,
+                                color: theme.colors.textPrimary,
+                              }}
+                            >
+                              {item.value}
+                            </td>
+                            <td
+                              className="px-4 py-3 text-right"
+                              style={{
+                                fontSize: styles.labelFontSize,
+                                color: theme.colors.textSecondary,
+                              }}
+                            >
+                              {pct.toFixed(1)}%
+                            </td>
                           </tr>
                         );
                       })}
@@ -283,13 +534,29 @@ export function SurveyDashboard() {
         <div className="mt-12 flex justify-center gap-3">
           <button
             onClick={() => navigate('/')}
-            className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-5 py-2.5 border rounded-lg transition-colors hover:opacity-80"
+            style={{
+              fontFamily: styles.fontFamily,
+              fontSize: styles.labelFontSize,
+              fontWeight: 500,
+              color: theme.colors.textSecondary,
+              borderColor: theme.colors.borderColor,
+              backgroundColor: theme.colors.cardBackground,
+            }}
           >
             Upload New Data
           </button>
           <button
             onClick={() => navigate('/insights')}
-            className="px-5 py-2.5 text-sm font-medium text-gray-900 border border-gray-900 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-5 py-2.5 border rounded-lg transition-colors hover:opacity-80"
+            style={{
+              fontFamily: styles.fontFamily,
+              fontSize: styles.labelFontSize,
+              fontWeight: 500,
+              color: theme.colors.textPrimary,
+              borderColor: theme.colors.textPrimary,
+              backgroundColor: theme.colors.cardBackground,
+            }}
           >
             Text Insights
           </button>

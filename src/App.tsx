@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
 import { ScrollToTop } from './components/ScrollToTop';
+import { ThemeEditor } from './components/ThemeEditor';
 import { Upload, Dashboard, Insights } from './pages';
 
 function App() {
@@ -15,6 +16,8 @@ function App() {
           <Route path="/insights" element={<Insights />} />
         </Routes>
       </div>
+      {/* Theme Editor renders as a slide-out panel */}
+      <ThemeEditor />
     </Router>
   );
 }

@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { RotateCcw } from 'lucide-react';
 import { useSurveyStore } from '../stores/useSurveyStore';
+import { useChartTheme } from '../hooks/useChartTheme';
+import { FONT_SIZE_MAP } from '../lib/themes';
 
 interface EditableChartTitleProps {
   columnName: string;
@@ -9,6 +11,7 @@ interface EditableChartTitleProps {
 
 export function EditableChartTitle({ columnName, originalTitle }: EditableChartTitleProps) {
   const { customTitles, setCustomTitle, clearCustomTitle } = useSurveyStore();
+  const { theme, styles } = useChartTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,8 +65,16 @@ export function EditableChartTitle({ columnName, originalTitle }: EditableChartT
           onChange={(e) => setEditValue(e.target.value)}
           onBlur={handleSave}
           onKeyDown={handleKeyDown}
-          className="rounded-md border border-gray-300 bg-white px-2 py-1 text-base font-medium text-gray-900 focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
-          style={{ width: `${Math.max(editValue.length * 10, 100)}px` }}
+          className="rounded-md border px-2 py-1 focus:outline-none focus:ring-1"
+          style={{
+            width: `${Math.max(editValue.length * 10, 100)}px`,
+            fontFamily: styles.fontFamily,
+            fontSize: styles.titleFontSize,
+            fontWeight: theme.typography.titleWeight,
+            backgroundColor: theme.colors.cardBackground,
+            borderColor: theme.colors.borderColor,
+            color: theme.colors.textPrimary,
+          }}
         />
       </div>
     );
@@ -73,8 +84,15 @@ export function EditableChartTitle({ columnName, originalTitle }: EditableChartT
     <div className="flex items-center gap-2 group/title">
       <h2
         onClick={handleStartEdit}
-        className="cursor-text text-base font-medium text-gray-900 hover:text-gray-700"
+        className="cursor-text hover:opacity-80"
         title="Click to edit"
+        style={{
+          fontFamily: styles.fontFamily,
+          fontSize: styles.titleFontSize,
+          fontWeight: theme.typography.titleWeight,
+          letterSpacing: 'normal',
+          color: theme.colors.textPrimary,
+        }}
       >
         {displayTitle}
       </h2>
@@ -84,7 +102,7 @@ export function EditableChartTitle({ columnName, originalTitle }: EditableChartT
           className="opacity-0 transition-opacity group-hover/title:opacity-100"
           title="Reset to original title"
         >
-          <RotateCcw className="h-3.5 w-3.5 text-gray-400 hover:text-gray-600" />
+          <RotateCcw className="h-3.5 w-3.5" style={{ color: theme.colors.textMuted }} />
         </button>
       )}
     </div>

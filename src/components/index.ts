@@ -15,5 +15,14 @@ export { ChartExportButton } from './ChartExportButton';
 export { CopyChartButton } from './CopyChartButton';
 export { EditableChartTitle } from './EditableChartTitle';
 export { ResetFiltersButton } from './ResetFiltersButton';
+export { KeyFindings } from './KeyFindings';
 export { CrossTabBuilder } from './CrossTabBuilder';
+export { DataCleaning } from './DataCleaning';
+export { CleaningModeSelector } from './CleaningModeSelector';
+export { CleaningReportDisplay } from './CleaningReportDisplay';
+export { ManualCleaningPanel } from './ManualCleaningPanel';
+export { TemplateManager } from './TemplateManager';
+export { CleaningReportCharts } from './CleaningReportCharts';
+export { FileInfo } from './FileInfo';
+export { CleaningStepper } from './CleaningStepper';
 
