@@ -514,8 +514,15 @@ export function SurveyDashboard() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2" data-export-exclude>
-                  <CopyChartButton chartId={chartId} />
-                  <ChartExportButton chartId={chartId} chartTitle={analysis.title} />
+                  <CopyChartButton
+                    chartId={chartId}
+                    chartData={{ title: analysis.title, n: analysis.n, data: analysis.data }}
+                  />
+                  <ChartExportButton
+                    chartId={chartId}
+                    chartTitle={analysis.title}
+                    chartData={{ title: analysis.title, n: analysis.n, data: analysis.data }}
+                  />
                   {analysis.availableValues && analysis.availableValues.length > 1 && (
                     <ChartFilter
                       columnName={analysis.columnName}

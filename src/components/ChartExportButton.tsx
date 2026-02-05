@@ -2,20 +2,30 @@ import { useState } from 'react';
 import { Download } from 'lucide-react';
 import { useChartImageExport } from '../hooks/useChartImageExport';
 import { useChartTheme } from '../hooks/useChartTheme';
+import { useSVGExport, type ChartExportData } from '../hooks/useSVGExport';
 
 interface ChartExportButtonProps {
   chartId: string;
   chartTitle: string;
+  chartData?: ChartExportData;
 }
 
-export function ChartExportButton({ chartId, chartTitle }: ChartExportButtonProps) {
+export function ChartExportButton({ chartId, chartTitle, chartData }: ChartExportButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { exportChartAsImage } = useChartImageExport();
+  const { downloadChartSVG } = useSVGExport();
   const { theme, styles } = useChartTheme();
 
-  const handleExport = async (includeTable: boolean) => {
+  const handleExportPNG = async (includeTable: boolean) => {
     const fileName = `${chartTitle.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
     await exportChartAsImage(chartId, fileName, includeTable);
+    setIsOpen(false);
+  };
+
+  const handleExportSVG = () => {
+    if (chartData) {
+      downloadChartSVG(chartData);
+    }
     setIsOpen(false);
   };
 
@@ -55,7 +65,7 @@ export function ChartExportButton({ chartId, chartTitle }: ChartExportButtonProp
             }}
           >
             <button
-              onClick={() => handleExport(false)}
+              onClick={() => handleExportPNG(false)}
               className="w-full px-3 py-2 text-left hover:opacity-80"
               style={{
                 fontFamily: styles.fontFamily,
@@ -63,10 +73,10 @@ export function ChartExportButton({ chartId, chartTitle }: ChartExportButtonProp
                 color: theme.colors.textSecondary,
               }}
             >
-              Chart only
+              PNG (Chart only)
             </button>
             <button
-              onClick={() => handleExport(true)}
+              onClick={() => handleExportPNG(true)}
               className="w-full px-3 py-2 text-left hover:opacity-80"
               style={{
                 fontFamily: styles.fontFamily,
@@ -74,8 +84,21 @@ export function ChartExportButton({ chartId, chartTitle }: ChartExportButtonProp
                 color: theme.colors.textSecondary,
               }}
             >
-              Chart + Data Table
+              PNG (Chart + Table)
             </button>
+            {chartData && (
+              <button
+                onClick={handleExportSVG}
+                className="w-full px-3 py-2 text-left hover:opacity-80"
+                style={{
+                  fontFamily: styles.fontFamily,
+                  fontSize: styles.axisTickFontSize,
+                  color: theme.colors.textSecondary,
+                }}
+              >
+                SVG (Editable)
+              </button>
+            )}
           </div>
         </>
       )}
