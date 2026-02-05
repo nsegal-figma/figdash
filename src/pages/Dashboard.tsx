@@ -7,6 +7,7 @@ import { useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSurveyStore } from '../stores/useSurveyStore';
 import { useChartTheme } from '../hooks/useChartTheme';
+import { useStorytelling, useChartStorytelling } from '../hooks/useStorytelling';
 import { EmptyState, Button } from '../components';
 import { SortSelector } from '../components/SortSelector';
 import { ChartFilter } from '../components/ChartFilter';
@@ -17,12 +18,14 @@ import { ResetFiltersButton } from '../components/ResetFiltersButton';
 import { KeyFindings } from '../components/KeyFindings';
 import { CrossTabBuilder } from '../components/CrossTabBuilder';
 import { ThemeEditorButton } from '../components/ThemeEditor';
+import { StorytellingToggle } from '../components/storytelling';
 import { generateAllVisualizations } from '../lib/analytics/advanced';
 import { generateGradientColors } from '../lib/colorPalettes';
-import { FileText, Upload as UploadIcon, Download } from 'lucide-react';
+import { FileText, Upload as UploadIcon, Download, Sparkles, X } from 'lucide-react';
 import { usePDFExport } from '../hooks/usePDFExport';
 import { formatFileName } from '../utils/csvParser';
 import type { ChartTheme } from '../types/chartTheme';
+import type { Annotation, BarEmphasis } from '../types/storytelling';
 
 // Themed Horizontal Bar Component with axis and tooltip
 interface HorizontalBarProps {
@@ -35,6 +38,11 @@ interface HorizontalBarProps {
   showAxis?: boolean;
   theme: ChartTheme;
   styles: ReturnType<typeof import('../lib/themes').computeThemeStyles>;
+  // Storytelling props
+  annotation?: Annotation;
+  emphasis?: BarEmphasis;
+  onAnnotationUpdate?: (text: string) => void;
+  onAnnotationRemove?: () => void;
 }
 
 function HorizontalBar({
@@ -47,6 +55,10 @@ function HorizontalBar({
   showAxis = false,
   theme,
   styles,
+  annotation,
+  emphasis,
+  onAnnotationUpdate,
+  onAnnotationRemove,
 }: HorizontalBarProps) {
   const percentage = (value / maxValue) * 100;
   const percentOfTotal = (value / totalN) * 100;
@@ -84,9 +96,54 @@ function HorizontalBar({
           </div>
         </div>
       )}
+      {/* Storytelling Annotation - ABOVE the bar */}
+      {annotation && annotation.isVisible && (
+        <div
+          className="flex items-center gap-4"
+          style={{ marginBottom: '4px' }}
+        >
+          <div style={{ width: theme.layout.labelWidth }} className="flex-shrink-0" />
+          <div className="flex-1">
+            <div
+              className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1"
+              style={{
+                backgroundColor: '#f59e0b',
+                color: '#fff',
+                fontFamily: styles.fontFamily,
+                fontSize: styles.axisTickFontSize,
+                fontWeight: 600,
+              }}
+            >
+              <Sparkles className="h-3 w-3" />
+              <span>{annotation.text}</span>
+              {onAnnotationUpdate && onAnnotationRemove && (
+                <button
+                  onClick={() => onAnnotationRemove()}
+                  className="ml-1 hover:opacity-70"
+                  title="Dismiss"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div
         className="flex items-center gap-4 group"
-        style={{ marginBottom: theme.layout.barGap }}
+        style={{
+          marginBottom: theme.layout.barGap,
+          // Add highlight background when emphasized
+          ...(emphasis ? {
+            backgroundColor: '#f59e0b15',
+            marginLeft: '-8px',
+            marginRight: '-8px',
+            paddingLeft: '8px',
+            paddingRight: '8px',
+            borderRadius: '4px',
+          } : {}),
+        }}
       >
         <div
           className="text-right flex-shrink-0"
@@ -94,8 +151,8 @@ function HorizontalBar({
             width: theme.layout.labelWidth,
             fontFamily: styles.fontFamily,
             fontSize: styles.labelFontSize,
-            fontWeight: theme.typography.labelWeight,
-            color: theme.colors.textSecondary,
+            fontWeight: emphasis ? 600 : theme.typography.labelWeight,
+            color: emphasis ? theme.colors.textPrimary : theme.colors.textSecondary,
           }}
         >
           {label}
@@ -130,6 +187,10 @@ function HorizontalBar({
               borderStyle: theme.shapes.barBorderWidth > 0 ? 'solid' : undefined,
               cursor: theme.effects.hoverCursor ? 'pointer' : 'default',
               transition: styles.animationTransition,
+              // Strong emphasis with border
+              ...(emphasis ? {
+                boxShadow: '0 0 0 3px #f59e0b',
+              } : {}),
             }}
             onMouseEnter={(e) => {
               if (theme.effects.hoverOpacity < 1) {
@@ -195,10 +256,71 @@ function HorizontalBar({
   );
 }
 
+// Chart wrapper component that handles storytelling
+interface ChartBarsProps {
+  analysis: {
+    columnName: string;
+    n: number;
+    data: { name: string; value: number }[];
+  };
+  chartColors: string[];
+  theme: ChartTheme;
+  styles: ReturnType<typeof import('../lib/themes').computeThemeStyles>;
+  isStorytellingEnabled: boolean;
+}
+
+function ChartBars({ analysis, chartColors, theme, styles, isStorytellingEnabled }: ChartBarsProps) {
+  const {
+    analyzeChart,
+    getAnnotationsForBar,
+    getEmphasisForBar,
+    updateAnnotationText,
+    removeAnnotation,
+  } = useChartStorytelling(analysis.columnName);
+
+  // Trigger pattern detection when storytelling is enabled
+  useEffect(() => {
+    if (isStorytellingEnabled) {
+      analyzeChart(analysis.data, analysis.n);
+    }
+  }, [isStorytellingEnabled, analysis.data, analysis.n, analyzeChart]);
+
+  const maxValue = Math.max(...analysis.data.map((d) => d.value));
+
+  return (
+    <>
+      {analysis.data.map((item, barIdx) => {
+        const annotations = isStorytellingEnabled ? getAnnotationsForBar(item.name) : [];
+        const emphasis = isStorytellingEnabled ? getEmphasisForBar(item.name) : undefined;
+        const annotation = annotations[0]; // Show first annotation
+
+        return (
+          <HorizontalBar
+            key={barIdx}
+            label={item.name}
+            value={item.value}
+            maxValue={maxValue}
+            totalN={analysis.n}
+            color={chartColors[barIdx]}
+            showAxis={barIdx === 0}
+            theme={theme}
+            styles={styles}
+            annotation={annotation}
+            emphasis={emphasis}
+            onAnnotationUpdate={annotation ? (text) => updateAnnotationText(annotation.id, text) : undefined}
+            onAnnotationRemove={annotation ? () => removeAnnotation(annotation.id) : undefined}
+          />
+        );
+      })}
+    </>
+  );
+}
+
 export function SurveyDashboard() {
   const navigate = useNavigate();
   const { surveyData, sortOrder, filters, customTitles, insights, executiveSummary, isGeneratingInsights } = useSurveyStore();
   const { theme, colorPalette, styles } = useChartTheme();
+  const { isEnabled: isStorytellingEnabled } = useStorytelling();
   const { exportDashboardToPDF } = usePDFExport();
 
   // Redirect to upload if no data
@@ -317,6 +439,7 @@ export function SurveyDashboard() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <StorytellingToggle />
             <ResetFiltersButton />
             <SortSelector />
             <ThemeEditorButton />
@@ -404,24 +527,13 @@ export function SurveyDashboard() {
 
               {/* Horizontal Bars */}
               <div className="mb-8">
-                {(() => {
-                  // Generate gradient colors for this chart using theme's color palette
-                  const chartColors = generateGradientColors(colorPalette, analysis.data, sortOrder);
-
-                  return analysis.data.map((item: any, barIdx: number) => (
-                    <HorizontalBar
-                      key={barIdx}
-                      label={item.name}
-                      value={item.value}
-                      maxValue={Math.max(...analysis.data.map((d: any) => d.value))}
-                      totalN={analysis.n}
-                      color={chartColors[barIdx]}
-                      showAxis={barIdx === 0}
-                      theme={theme}
-                      styles={styles}
-                    />
-                  ));
-                })()}
+                <ChartBars
+                  analysis={analysis}
+                  chartColors={generateGradientColors(colorPalette, analysis.data, sortOrder)}
+                  theme={theme}
+                  styles={styles}
+                  isStorytellingEnabled={isStorytellingEnabled}
+                />
               </div>
 
               {/* Data Table */}

@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { RotateCcw } from 'lucide-react';
 import { useSurveyStore } from '../stores/useSurveyStore';
 import { useChartTheme } from '../hooks/useChartTheme';
-import { FONT_SIZE_MAP } from '../lib/themes';
 
 interface EditableChartTitleProps {
   columnName: string;

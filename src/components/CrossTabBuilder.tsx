@@ -1,17 +1,68 @@
-import { useState, useMemo } from 'react';
-import { Plus, X, Sparkles } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Plus, X, Sparkles, Lightbulb } from 'lucide-react';
 import { useSurveyStore } from '../stores/useSurveyStore';
 import { useChartTheme } from '../hooks/useChartTheme';
+import { useStorytelling, useCrossTabStorytelling } from '../hooks/useStorytelling';
 import { Card, Button } from './';
 import { generateColorsFromPalette } from '../lib/colorPalettes';
 import { suggestCrossTabs } from '../lib/analytics/crossTabSuggestions';
 import { BORDER_RADIUS_MAP } from '../lib/themes';
+import type { CrossTabRow } from '../types/storytelling';
 
 interface CrossTabVisualization {
   id: string;
   rowColumn: string;
   segmentColumn: string;
   visualizationType: 'stacked' | 'grouped';
+}
+
+// Cross-tab insight display component
+function CrossTabInsight({
+  crossTabId,
+  data,
+  rowColumn,
+  segmentColumn
+}: {
+  crossTabId: string;
+  data: CrossTabRow[];
+  rowColumn: string;
+  segmentColumn: string;
+}) {
+  const { isEnabled } = useStorytelling();
+  const { analyzeCrossTab, patterns } = useCrossTabStorytelling(crossTabId);
+  const { theme, styles } = useChartTheme();
+
+  useEffect(() => {
+    if (isEnabled && data.length > 0) {
+      analyzeCrossTab(data, rowColumn, segmentColumn);
+    }
+  }, [isEnabled, data, rowColumn, segmentColumn, analyzeCrossTab]);
+
+  if (!isEnabled || patterns.length === 0) return null;
+
+  // Show only the top pattern
+  const topPattern = patterns[0];
+
+  return (
+    <div
+      className="mb-4 flex items-center gap-2 rounded-md border px-3 py-2"
+      style={{
+        backgroundColor: `${theme.colors.textPrimary}08`,
+        borderColor: `${theme.colors.textPrimary}20`,
+      }}
+    >
+      <Lightbulb className="h-4 w-4 flex-shrink-0" style={{ color: theme.colors.textSecondary }} />
+      <span
+        style={{
+          fontFamily: styles.fontFamily,
+          fontSize: styles.axisTickFontSize,
+          color: theme.colors.textSecondary,
+        }}
+      >
+        {topPattern.suggestedAnnotation}
+      </span>
+    </div>
+  );
 }
 
 export function CrossTabBuilder() {
@@ -545,6 +596,14 @@ export function CrossTabBuilder() {
                 <X className="h-4 w-4" />
               </button>
             </div>
+
+            {/* Storytelling Insight */}
+            <CrossTabInsight
+              crossTabId={crossTab.id}
+              data={data}
+              rowColumn={crossTab.rowColumn}
+              segmentColumn={crossTab.segmentColumn}
+            />
 
             {/* Visualization */}
             <div className="mb-6">

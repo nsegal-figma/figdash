@@ -19,7 +19,6 @@ import { ThemePresets } from './ThemePresets';
 export function ThemeEditor() {
   const {
     isEditorOpen,
-    activeTheme,
     closeEditor,
     resetToDefault,
   } = useThemeStore();
