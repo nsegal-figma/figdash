@@ -56,7 +56,7 @@ describe('AxisY Component', () => {
   });
 
   it('applies custom tick formatter', () => {
-    const formatter = (value: number) => `$${value}`;
+    const formatter = (value: string | number) => `$${value}`;
 
     const { container } = render(
       <BarChart width={400} height={200} data={mockData}>

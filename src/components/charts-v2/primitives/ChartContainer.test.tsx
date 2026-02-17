@@ -7,6 +7,7 @@ vi.mock('recharts', async () => {
   const actual = await vi.importActual('recharts');
   return {
     ...actual,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
   };
 });

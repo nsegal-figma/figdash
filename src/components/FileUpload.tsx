@@ -22,9 +22,9 @@ export function FileUpload({
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const validateFile = (file: File): boolean => {
+  const validateFile = useCallback((file: File): boolean => {
     setError('');
-    
+
     // Check file type
     if (accept && !file.name.endsWith(accept.replace('*', ''))) {
       setError(`Please upload a ${accept} file`);
@@ -39,14 +39,14 @@ export function FileUpload({
     }
 
     return true;
-  };
+  }, [accept, maxSize]);
 
-  const handleFile = (file: File) => {
+  const handleFile = useCallback((file: File) => {
     if (validateFile(file)) {
       setSelectedFile(file);
       onFileSelect(file);
     }
-  };
+  }, [validateFile, onFileSelect]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -56,7 +56,7 @@ export function FileUpload({
     if (file) {
       handleFile(file);
     }
-  }, []);
+  }, [handleFile]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

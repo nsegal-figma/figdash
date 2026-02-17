@@ -9,11 +9,11 @@ import type { TooltipProps } from 'recharts';
 import { designTokens } from '@/lib/designTokens';
 
 export interface ChartTooltipProps
-  extends Omit<TooltipProps<any, any>, 'contentStyle' | 'cursor' | 'animationEasing'> {
+  extends Omit<TooltipProps<number, string>, 'contentStyle' | 'cursor' | 'animationEasing'> {
   /** Custom formatter for tooltip values */
-  valueFormatter?: (value: any, name: any) => string;
+  valueFormatter?: (value: number, name: string) => string;
   /** Custom label formatter */
-  labelFormatter?: (label: any) => string;
+  labelFormatter?: (label: string) => string;
   /** Show cursor highlight */
   showCursor?: boolean;
   /** Cursor fill color (defaults to primary with low opacity) */

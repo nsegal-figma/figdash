@@ -52,7 +52,7 @@ describe('AxisX Component', () => {
   });
 
   it('applies custom tick formatter', () => {
-    const formatter = (value: string) => `Item ${value}`;
+    const formatter = (value: string | number) => `Item ${value}`;
 
     const { container } = render(
       <BarChart width={400} height={200} data={mockData}>

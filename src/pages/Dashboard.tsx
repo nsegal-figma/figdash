@@ -344,7 +344,7 @@ export function SurveyDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {analysis.type === 'simple' && analysis.data.map((item: any, i: number) => {
+                      {analysis.type === 'simple' && analysis.data.map((item: { name: string; value: number }, i: number) => {
                         const pct = (item.value / analysis.n) * 100;
                         return (
                           <tr

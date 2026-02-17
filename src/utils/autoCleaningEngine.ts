@@ -90,7 +90,7 @@ export async function runAutoCleaning(
 
   // Start with original data
   let cleanedRows = [...surveyData.rows];
-  let cleanedColumns = [...surveyData.columns];
+  const cleanedColumns = [...surveyData.columns];
 
   // Apply cleaning operations in order
 

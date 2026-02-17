@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, Loader2, ExternalLink } from 'lucide-react';
 import { useSurveyStore } from '../stores/useSurveyStore';
 import { getFigmaFiles, uploadChartToFigma, type FigmaFile } from '../lib/figma/api';
@@ -22,11 +22,7 @@ export function FigmaFileSelectorModal({
   const [selectedFileKey, setSelectedFileKey] = useState<string | null>(null);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    loadFiles();
-  }, []);
-
-  const loadFiles = async () => {
+  const loadFiles = useCallback(async () => {
     if (!figmaToken) return;
 
     setIsLoading(true);
@@ -35,12 +31,16 @@ export function FigmaFileSelectorModal({
     try {
       const figmaFiles = await getFigmaFiles(figmaToken);
       setFiles(figmaFiles);
-    } catch (err) {
+    } catch {
       setError('Failed to load Figma files. Check your connection.');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [figmaToken]);
+
+  useEffect(() => {
+    loadFiles();
+  }, [loadFiles]);
 
   const handleUpload = async () => {
     if (!figmaToken || !selectedFileKey) return;
@@ -62,7 +62,7 @@ export function FigmaFileSelectorModal({
       } else {
         setError('Failed to upload chart. Please try again.');
       }
-    } catch (err) {
+    } catch {
       setError('Upload failed. Please try again.');
     } finally {
       setIsUploading(false);

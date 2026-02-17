@@ -9,7 +9,7 @@ import { designTokens } from '../../../lib/designTokens';
 
 export interface AxisXProps extends Omit<XAxisProps, 'tick' | 'stroke'> {
   /** Custom tick formatter function */
-  tickFormatter?: (value: any) => string;
+  tickFormatter?: (value: string | number) => string;
   /** Axis label/title */
   label?: string;
   /** Rotate tick labels (degrees) */
@@ -52,7 +52,7 @@ export function AxisX({
         fontSize: parseInt(designTokens.typography.fontSize.xs),
         fontFamily: designTokens.typography.fontFamily.primary,
         textAnchor: tickRotation !== 0 ? 'end' : 'middle',
-      } as any}
+      } as Record<string, unknown>}
       angle={tickRotation}
       tickLine={showTicks}
       tickFormatter={tickFormatter}

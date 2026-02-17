@@ -7,6 +7,7 @@ vi.mock('recharts', async () => {
   const actual = await vi.importActual('recharts');
   return {
     ...actual,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
   };
 });
@@ -162,7 +163,7 @@ describe('BarChartV2', () => {
   });
 
   it('applies value formatter', () => {
-    const formatter = (value: number) => `$${value}`;
+    const formatter = (value: string | number) => `$${value}`;
 
     const { container } = render(
       <BarChartV2
@@ -177,8 +178,10 @@ describe('BarChartV2', () => {
   });
 
   it('handles null data gracefully', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const nullData = null as any;
     const { getByText } = render(
-      <BarChartV2 data={null as any} xKey="category" yKeys="value" />
+      <BarChartV2 data={nullData} xKey="category" yKeys="value" />
     );
 
     expect(getByText('No data available for this chart')).toBeTruthy();

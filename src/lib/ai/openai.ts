@@ -78,7 +78,7 @@ Respond ONLY with valid JSON matching this structure:
         sentiment: parsed.sentiment || 'neutral',
         insights: parsed.insights || [],
       };
-    } catch (parseError) {
+    } catch {
       console.error('Failed to parse OpenAI response:', content);
       // Fallback if JSON parsing fails
       return {

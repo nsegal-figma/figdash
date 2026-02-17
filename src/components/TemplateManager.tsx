@@ -37,7 +37,7 @@ export function TemplateManager({
       setShowSaveDialog(false);
       setNewTemplateName('');
       setNewTemplateDesc('');
-    } catch (error) {
+    } catch {
       alert('Failed to save template');
     }
   };

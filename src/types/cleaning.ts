@@ -154,8 +154,8 @@ export interface CleaningAction {
     columns?: string[];
     count: number;
   };
-  before?: any;
-  after?: any;
+  before?: string | number | null;
+  after?: string | number | null;
 }
 
 // Cleaning Report

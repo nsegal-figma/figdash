@@ -8,13 +8,13 @@ import { exportToCSV, exportToPNG, exportToSVG, copyDataToClipboard } from '../l
 
 export interface UseChartExportResult {
   /** Export data to CSV */
-  exportCSV: (data: Record<string, any>[], filename?: string) => void;
+  exportCSV: (data: Record<string, string | number>[], filename?: string) => void;
   /** Export chart as PNG */
   exportPNG: (svgElement: SVGSVGElement, filename?: string) => Promise<void>;
   /** Export chart as SVG */
   exportSVG: (svgElement: SVGSVGElement, filename?: string) => void;
   /** Copy data to clipboard as JSON */
-  copyData: (data: Record<string, any>[]) => Promise<void>;
+  copyData: (data: Record<string, string | number>[]) => Promise<void>;
 }
 
 /**
@@ -30,7 +30,7 @@ export interface UseChartExportResult {
  * ```
  */
 export function useChartExport(): UseChartExportResult {
-  const exportCSV = useCallback((data: Record<string, any>[], filename?: string) => {
+  const exportCSV = useCallback((data: Record<string, string | number>[], filename?: string) => {
     exportToCSV(data, filename);
   }, []);
 
@@ -42,7 +42,7 @@ export function useChartExport(): UseChartExportResult {
     exportToSVG(svgElement, filename);
   }, []);
 
-  const copyData = useCallback(async (data: Record<string, any>[]) => {
+  const copyData = useCallback(async (data: Record<string, string | number>[]) => {
     await copyDataToClipboard(data);
   }, []);
 

@@ -42,7 +42,7 @@ export interface PieChartV2Props {
   /** Custom colors */
   colors?: string[];
   /** Value formatter */
-  valueFormatter?: (value: any) => string;
+  valueFormatter?: (value: string | number) => string;
   /** Chart variant */
   variant?: 'pie' | 'donut';
   /** Inner radius for donut (0-1, or pixel value) */

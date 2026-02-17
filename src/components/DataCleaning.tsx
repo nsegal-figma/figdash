@@ -69,7 +69,7 @@ export function DataCleaning({ rawData, issues, onClean, onSkip, onBack }: DataC
   useEffect(() => {
     const detectedMetadata = Array.from(new Set(detectMetadataColumns(rawData[headerRowIndex] || rawData[0])));
     setColumnsToRemove(new Set(detectedMetadata));
-  }, [headerRowIndex]);
+  }, [headerRowIndex, rawData]);
 
   const hasIssues = issues.hasMultipleHeaderRows || issues.hasMetadataColumns;
 

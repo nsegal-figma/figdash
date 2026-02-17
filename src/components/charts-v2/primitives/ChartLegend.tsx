@@ -42,7 +42,7 @@ export function ChartLegend({
   position = 'bottom',
   layout = 'horizontal',
   iconShape = 'square',
-  interactive = true,
+  interactive: _,
   ...props
 }: ChartLegendProps) {
   // Map our simplified position to Recharts verticalAlign and align

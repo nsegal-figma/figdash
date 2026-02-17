@@ -119,7 +119,7 @@ export const useStorytellingStore = create<StorytellingStore>()(
       },
 
       // Chart pattern actions
-      setChartPatterns: (columnName, patterns, _totalN) => {
+      setChartPatterns: (columnName, patterns, _) => {
         set((state) => {
           const existing = state.chartConfigs[columnName];
 
@@ -176,7 +176,7 @@ export const useStorytellingStore = create<StorytellingStore>()(
 
       clearChartPatterns: (columnName) => {
         set((state) => {
-          const { [columnName]: _, ...rest } = state.chartConfigs;
+          const { [columnName]: _removed, ...rest } = state.chartConfigs;
           return { chartConfigs: rest };
         });
       },
@@ -228,7 +228,7 @@ export const useStorytellingStore = create<StorytellingStore>()(
 
       clearCrossTabPatterns: (crossTabId) => {
         set((state) => {
-          const { [crossTabId]: _, ...rest } = state.crossTabConfigs;
+          const { [crossTabId]: _removed, ...rest } = state.crossTabConfigs;
           return { crossTabConfigs: rest };
         });
       },

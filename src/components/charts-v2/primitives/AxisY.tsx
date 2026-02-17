@@ -9,7 +9,7 @@ import { designTokens } from '../../../lib/designTokens';
 
 export interface AxisYProps extends Omit<YAxisProps, 'tick' | 'stroke'> {
   /** Custom tick formatter function */
-  tickFormatter?: (value: any) => string;
+  tickFormatter?: (value: string | number) => string;
   /** Axis label/title */
   label?: string;
   /** Show axis line */

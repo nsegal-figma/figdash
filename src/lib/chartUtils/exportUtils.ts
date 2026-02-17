@@ -8,7 +8,7 @@
  * @param data - Data array to export
  * @param filename - Output filename (default: 'chart-data.csv')
  */
-export function exportToCSV(data: Record<string, any>[], filename = 'chart-data.csv'): void {
+export function exportToCSV(data: Record<string, string | number>[], filename = 'chart-data.csv'): void {
   if (!data || data.length === 0) {
     console.warn('No data to export');
     return;
@@ -138,7 +138,7 @@ export function exportToSVG(svgElement: SVGSVGElement, filename = 'chart.svg'): 
  * Copy chart data to clipboard as JSON
  * @param data - Data to copy
  */
-export async function copyDataToClipboard(data: Record<string, any>[]): Promise<void> {
+export async function copyDataToClipboard(data: Record<string, string | number>[]): Promise<void> {
   try {
     const jsonString = JSON.stringify(data, null, 2);
     await navigator.clipboard.writeText(jsonString);

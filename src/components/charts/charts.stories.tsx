@@ -544,56 +544,58 @@ export const LollipopSmallDataset: RenderStory = {
 // ChartRenderer Stories (Dynamic Chart Type Switching)
 // ============================================================
 
-export const RendererDynamicSwitching: RenderStory = {
-  render: () => {
-    const [chartType, setChartType] = useState<ChartType>('horizontal-bar');
+function DynamicSwitchingDemo() {
+  const [chartType, setChartType] = useState<ChartType>('horizontal-bar');
 
-    const chartTypes: { type: ChartType; label: string }[] = [
-      { type: 'horizontal-bar', label: 'Horizontal Bar' },
-      { type: 'vertical-bar', label: 'Vertical Bar' },
-      { type: 'pie', label: 'Pie' },
-      { type: 'donut', label: 'Donut' },
-      { type: 'lollipop', label: 'Lollipop' },
-    ];
+  const chartTypes: { type: ChartType; label: string }[] = [
+    { type: 'horizontal-bar', label: 'Horizontal Bar' },
+    { type: 'vertical-bar', label: 'Vertical Bar' },
+    { type: 'pie', label: 'Pie' },
+    { type: 'donut', label: 'Donut' },
+    { type: 'lollipop', label: 'Lollipop' },
+  ];
 
-    return (
-      <div>
-        <div style={{ marginBottom: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {chartTypes.map(({ type, label }) => (
-            <button
-              key={type}
-              onClick={() => setChartType(type)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: 6,
-                border: '1px solid #e5e7eb',
-                backgroundColor: chartType === type ? '#3b82f6' : '#fff',
-                color: chartType === type ? '#fff' : '#374151',
-                cursor: 'pointer',
-                fontSize: 13,
-                fontWeight: chartType === type ? 600 : 400,
-                transition: 'all 150ms ease',
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        <div style={{ minHeight: 350 }}>
-          <ChartRenderer
-            type={chartType}
-            data={satisfactionData}
-            totalN={satisfactionTotalN}
-            columnName="satisfaction_renderer"
-            colors={colorsFor(satisfactionData)}
-            theme={theme}
-            styles={styles}
-            height={350}
-          />
-        </div>
+  return (
+    <div>
+      <div style={{ marginBottom: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {chartTypes.map(({ type, label }) => (
+          <button
+            key={type}
+            onClick={() => setChartType(type)}
+            style={{
+              padding: '6px 14px',
+              borderRadius: 6,
+              border: '1px solid #e5e7eb',
+              backgroundColor: chartType === type ? '#3b82f6' : '#fff',
+              color: chartType === type ? '#fff' : '#374151',
+              cursor: 'pointer',
+              fontSize: 13,
+              fontWeight: chartType === type ? 600 : 400,
+              transition: 'all 150ms ease',
+            }}
+          >
+            {label}
+          </button>
+        ))}
       </div>
-    );
-  },
+      <div style={{ minHeight: 350 }}>
+        <ChartRenderer
+          type={chartType}
+          data={satisfactionData}
+          totalN={satisfactionTotalN}
+          columnName="satisfaction_renderer"
+          colors={colorsFor(satisfactionData)}
+          theme={theme}
+          styles={styles}
+          height={350}
+        />
+      </div>
+    </div>
+  );
+}
+
+export const RendererDynamicSwitching: RenderStory = {
+  render: () => <DynamicSwitchingDemo />,
 };
 
 export const RendererHorizontalBar: RenderStory = {

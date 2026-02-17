@@ -68,7 +68,7 @@ Focus on being concise, actionable, and emphasizing insights that would matter t
         surprisingFindings: parsed.surprisingFindings || [],
         recommendations: parsed.recommendations || [],
       };
-    } catch (parseError) {
+    } catch {
       console.error('Failed to parse executive summary:', content);
       // Better fallback: use description instead of title
       const topInsights = insights.slice(0, 5).map(i => i.description);

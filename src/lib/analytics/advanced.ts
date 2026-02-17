@@ -1,4 +1,5 @@
 import type { ChartRecommendation } from '../../types/chartTypes';
+import type { Column } from '../../types/survey';
 import { analyzeDataCharacteristics, recommendChartTypes } from './chartRecommendations';
 
 export interface CorrelationResult {
@@ -224,8 +225,8 @@ export interface ColumnVisualization {
 }
 
 export function generateAllVisualizations(
-  columns: any[],
-  rows: Record<string, any>[]
+  columns: Column[],
+  rows: Record<string, string | number>[]
 ): ColumnVisualization[] {
   const visualizations: ColumnVisualization[] = [];
   const skipColumns = ['ResponseID', 'response_id', 'id', 'timestamp', 'Timestamp'];

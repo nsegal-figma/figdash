@@ -41,8 +41,8 @@ export function detectCrossTabPatterns(
  */
 function detectSegmentDifferences(
   data: CrossTabRow[],
-  _rowColumn: string,
-  _segmentColumn: string,
+  _: string,
+  __: string,
   thresholds: PatternThresholds
 ): DetectedPattern[] {
   const patterns: DetectedPattern[] = [];
@@ -95,8 +95,8 @@ function detectSegmentDifferences(
  */
 function detectGroupDominance(
   data: CrossTabRow[],
-  _rowColumn: string,
-  _segmentColumn: string
+  _: string,
+  __: string
 ): DetectedPattern[] {
   const patterns: DetectedPattern[] = [];
 
@@ -143,8 +143,8 @@ function detectGroupDominance(
  */
 function detectPatternReversals(
   data: CrossTabRow[],
-  _rowColumn: string,
-  _segmentColumn: string
+  _: string,
+  __: string
 ): DetectedPattern | null {
   if (data.length !== 2) return null; // Only works well with exactly 2 rows
 

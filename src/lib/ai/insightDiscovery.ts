@@ -9,7 +9,8 @@ export interface Insight {
   confidence: number; // 0-1
   importance: number; // 0-1
   variables: string[];
-  supportingData: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supportingData: Record<string, any>;
 }
 
 /**

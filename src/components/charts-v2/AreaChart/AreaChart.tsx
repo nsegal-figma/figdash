@@ -49,7 +49,7 @@ export interface AreaChartV2Props {
   /** Custom colors */
   colors?: string[];
   /** Value formatter */
-  valueFormatter?: (value: any) => string;
+  valueFormatter?: (value: string | number) => string;
   /** Curve type */
   curveType?: 'linear' | 'monotone' | 'step';
   /** Area opacity */

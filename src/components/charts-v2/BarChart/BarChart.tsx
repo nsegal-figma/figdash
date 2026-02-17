@@ -48,7 +48,7 @@ export interface BarChartV2Props {
   /** Custom colors for bars */
   colors?: string[];
   /** Value formatter for tooltip/axis */
-  valueFormatter?: (value: any) => string;
+  valueFormatter?: (value: string | number) => string;
   /** X axis tick rotation */
   xTickRotation?: number;
   /** Use gradient fill for bars */
@@ -227,7 +227,7 @@ export function BarChartV2({
                 <LabelList
                   dataKey={key}
                   position={isHorizontal ? 'right' : 'top'}
-                  formatter={valueFormatter}
+                  formatter={valueFormatter as ((value: React.ReactNode) => React.ReactNode) | undefined}
                   style={{
                     fill: designTokens.colors.neutral.text[700],
                     fontSize: parseInt(designTokens.typography.fontSize.xs),

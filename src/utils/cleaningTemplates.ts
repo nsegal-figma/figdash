@@ -27,7 +27,7 @@ export function getSavedTemplates(): CleaningTemplate[] {
 
     const templates = JSON.parse(stored);
     // Convert date strings back to Date objects
-    return templates.map((t: any) => ({
+    return templates.map((t: CleaningTemplate & { createdAt: string; lastUsed: string | null }) => ({
       ...t,
       createdAt: new Date(t.createdAt),
       lastUsed: t.lastUsed ? new Date(t.lastUsed) : null,
@@ -152,7 +152,7 @@ export async function importTemplate(file: File): Promise<CleaningTemplate> {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
 
         resolve(importedTemplate);
-      } catch (error) {
+      } catch {
         reject(new Error('Failed to import template: Invalid JSON format'));
       }
     };

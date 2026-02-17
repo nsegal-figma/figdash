@@ -35,9 +35,9 @@ export async function getFigmaFiles(accessToken: string): Promise<FigmaFile[]> {
     // Filter to FigJam/Slides files and sort by most recent
     const files = data.files || [];
     return files
-      .filter((f: any) => f.name.toLowerCase().includes('slide') || f.name.toLowerCase().includes('deck'))
-      .sort((a: any, b: any) => new Date(b.last_modified).getTime() - new Date(a.last_modified).getTime())
-      .map((f: any) => ({
+      .filter((f: FigmaFile) => f.name.toLowerCase().includes('slide') || f.name.toLowerCase().includes('deck'))
+      .sort((a: FigmaFile, b: FigmaFile) => new Date(b.last_modified).getTime() - new Date(a.last_modified).getTime())
+      .map((f: FigmaFile) => ({
         key: f.key,
         name: f.name,
         thumbnail_url: f.thumbnail_url || '',

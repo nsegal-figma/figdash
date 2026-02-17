@@ -49,7 +49,7 @@ export interface LineChartV2Props {
   /** Custom colors for lines */
   colors?: string[];
   /** Value formatter */
-  valueFormatter?: (value: any) => string;
+  valueFormatter?: (value: string | number) => string;
   /** Line interpolation type */
   curveType?: 'linear' | 'monotone' | 'step';
   /** Show dots on data points */

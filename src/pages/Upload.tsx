@@ -21,7 +21,7 @@ import {
   applyDataCleaning,
   type DataIssues,
 } from '../utils/csvParser';
-import type { SurveyData } from '../types/survey';
+import type { SurveyData, Column } from '../types/survey';
 import { useSurveyStore } from '../stores/useSurveyStore';
 import { generateAISummaryWithOpenAI } from '../lib/ai/openai';
 import { discoverInsights } from '../lib/ai/insightDiscovery';
@@ -50,8 +50,8 @@ export function Upload() {
   } = useSurveyStore();
 
   const [previewData, setPreviewData] = useState<{
-    columns: any[];
-    rows: any[];
+    columns: Column[];
+    rows: Record<string, string | number>[];
   } | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentFile, setCurrentFile] = useState<File | null>(null);
@@ -278,12 +278,12 @@ export function Upload() {
     }
   };
 
-  const generateAISummariesInBackground = async (surveyData: any) => {
+  const generateAISummariesInBackground = async (surveyData: SurveyData) => {
     setIsGeneratingAI(true);
 
     // Get text columns (skip IDs)
     const skipColumns = ['ResponseID', 'response_id', 'id', 'timestamp', 'Timestamp'];
-    const textColumns = surveyData.columns.filter((c: any) =>
+    const textColumns = surveyData.columns.filter((c: Column) =>
       c.type === 'text' &&
       !skipColumns.some(skip => c.name.toLowerCase().includes(skip.toLowerCase()))
     );
@@ -291,7 +291,7 @@ export function Upload() {
     // Generate AI summaries for each text column
     for (const column of textColumns) {
       const values = surveyData.rows
-        .map((row: any) => String(row[column.name] || ''))
+        .map((row: Record<string, string | number>) => String(row[column.name] || ''))
         .filter((v: string) => v.trim() && v.length > 3);
 
       if (values.length > 0) {
@@ -307,7 +307,7 @@ export function Upload() {
     setIsGeneratingAI(false);
   };
 
-  const generateInsightsInBackground = async (surveyData: any) => {
+  const generateInsightsInBackground = async (surveyData: SurveyData) => {
     setIsGeneratingInsights(true);
 
     try {

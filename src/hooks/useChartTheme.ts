@@ -45,21 +45,18 @@ export function useChartTheme(): ChartThemeContext {
   const activeTheme = useThemeStore((state) => state.activeTheme);
   const isEditorOpen = useThemeStore((state) => state.isEditorOpen);
 
-  // Extract the updatedAt to force re-computation when theme changes
-  const themeVersion = activeTheme.updatedAt;
-
   // Get the actual color palette based on theme's dataPaletteId
   const colorPalette = useMemo(() => {
     const found = COLOR_PALETTES.find(
       (p) => p.id === activeTheme.colors.dataPaletteId
     );
     return found || COLOR_PALETTES[0];
-  }, [activeTheme.colors.dataPaletteId, themeVersion]);
+  }, [activeTheme.colors.dataPaletteId]);
 
-  // Compute CSS-ready style values - use themeVersion to force re-computation
+  // Compute CSS-ready style values
   const styles = useMemo(
     () => computeThemeStyles(activeTheme),
-    [activeTheme, themeVersion]
+    [activeTheme]
   );
 
   return {

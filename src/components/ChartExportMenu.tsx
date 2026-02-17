@@ -9,7 +9,7 @@ import { useChartExport } from '../hooks/useChartExport';
 
 export interface ChartExportMenuProps {
   /** Chart data to export */
-  data: Record<string, any>[];
+  data: Record<string, string | number>[];
   /** Chart name for filename */
   chartName: string;
   /** Optional: SVG element ref for image export */

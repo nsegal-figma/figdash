@@ -182,7 +182,7 @@ Focus on being conservative (avoid removing too much data) but effective (catch 
         },
         overall: parsed.overall || 'Using default recommendations.',
       };
-    } catch (parseError) {
+    } catch {
       console.error('Failed to parse AI recommendations:', content);
       throw new Error('Failed to parse recommendations from AI');
     }

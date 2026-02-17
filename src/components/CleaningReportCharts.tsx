@@ -8,7 +8,7 @@ import type { CleaningReport } from '../types/cleaning';
 
 interface CleaningReportChartsProps {
   report: CleaningReport;
-  originalData: any; // Original survey data for comparison
+  originalData: unknown; // Original survey data for comparison
 }
 
 export function CleaningReportCharts({ report }: CleaningReportChartsProps) {

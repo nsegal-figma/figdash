@@ -151,7 +151,7 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
       return { chartTypeSelections: newSelections };
     }),
   // Note: Use chartTypeSelections.get() directly instead of this getter
-  getChartType: (_columnName: string): ChartType | undefined => undefined,
+  getChartType: (_: string): ChartType | undefined => undefined,
 
   // Data Cleaning Actions
   setOriginalData: (data) => set({ originalData: data }),
