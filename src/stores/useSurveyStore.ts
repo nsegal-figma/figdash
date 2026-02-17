@@ -5,6 +5,7 @@ import type { AISummaryResponse } from '../lib/ai/openai';
 import type { Insight } from '../lib/ai/insightDiscovery';
 import type { ExecutiveSummary } from '../lib/ai/executiveSummary';
 import type { CleaningReport, CleaningSettings, CleaningMode } from '../types/cleaning';
+import type { ChartType } from '../types/chartTypes';
 
 export type SortOrder = 'desc' | 'asc';
 
@@ -22,6 +23,9 @@ interface SurveyStore {
   insights: Insight[];
   executiveSummary: ExecutiveSummary | null;
   isGeneratingInsights: boolean;
+
+  // Chart Type Selections
+  chartTypeSelections: Map<string, ChartType>;
 
   // Data Cleaning
   originalData: SurveyData | null;
@@ -46,6 +50,10 @@ interface SurveyStore {
   setInsights: (insights: Insight[]) => void;
   setExecutiveSummary: (summary: ExecutiveSummary) => void;
   setIsGeneratingInsights: (isGenerating: boolean) => void;
+
+  // Chart Type Actions
+  setChartType: (columnName: string, type: ChartType) => void;
+  getChartType: (columnName: string) => ChartType | undefined; // Use chartTypeSelections.get() directly instead
 
   // Data Cleaning Actions
   setOriginalData: (data: SurveyData) => void;
@@ -72,6 +80,9 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   insights: [],
   executiveSummary: null,
   isGeneratingInsights: false,
+
+  // Chart Type Selections
+  chartTypeSelections: new Map(),
 
   // Data Cleaning State
   originalData: null,
@@ -131,6 +142,16 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   setInsights: (insights) => set({ insights }),
   setExecutiveSummary: (summary) => set({ executiveSummary: summary }),
   setIsGeneratingInsights: (isGenerating) => set({ isGeneratingInsights: isGenerating }),
+
+  // Chart Type Actions
+  setChartType: (columnName, type) =>
+    set((state) => {
+      const newSelections = new Map(state.chartTypeSelections);
+      newSelections.set(columnName, type);
+      return { chartTypeSelections: newSelections };
+    }),
+  // Note: Use chartTypeSelections.get() directly instead of this getter
+  getChartType: (_columnName: string): ChartType | undefined => undefined,
 
   // Data Cleaning Actions
   setOriginalData: (data) => set({ originalData: data }),

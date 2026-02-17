@@ -25,4 +25,5 @@ export { TemplateManager } from './TemplateManager';
 export { CleaningReportCharts } from './CleaningReportCharts';
 export { FileInfo } from './FileInfo';
 export { CleaningStepper } from './CleaningStepper';
+export { ChartTypeSelector } from './ChartTypeSelector';
 

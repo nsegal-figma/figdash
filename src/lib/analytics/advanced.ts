@@ -1,3 +1,6 @@
+import type { ChartRecommendation } from '../../types/chartTypes';
+import { analyzeDataCharacteristics, recommendChartTypes } from './chartRecommendations';
+
 export interface CorrelationResult {
   coefficient: number;
   type: 'pearson' | 'spearman';
@@ -217,6 +220,7 @@ export interface ColumnVisualization {
   visualization: 'bar' | 'average' | 'text_analysis';
   data: Array<{ name: string; value: number; count?: number }>;
   n: number;
+  recommendations: ChartRecommendation[];
 }
 
 export function generateAllVisualizations(
@@ -248,6 +252,10 @@ export function generateAllVisualizations(
         .map(([name, value]) => ({ name, value }))
         .sort((a, b) => b.value - a.value);
 
+      // Generate chart recommendations
+      const characteristics = analyzeDataCharacteristics(data, 'categorical', column.name);
+      const recommendations = recommendChartTypes(characteristics);
+
       visualizations.push({
         columnName: column.name,
         title: formatColumnTitle(column.name),
@@ -255,6 +263,7 @@ export function generateAllVisualizations(
         visualization: 'bar',
         data,
         n: values.length,
+        recommendations,
       });
     }
 
@@ -287,6 +296,10 @@ export function generateAllVisualizations(
           .map(([name, value]) => ({ name: String(name), value }))
           .sort((a, b) => Number(a.name) - Number(b.name));
 
+        // Generate chart recommendations for numeric scales
+        const characteristics = analyzeDataCharacteristics(data, 'numeric', column.name);
+        const recommendations = recommendChartTypes(characteristics);
+
         visualizations.push({
           columnName: column.name,
           title: formatColumnTitle(column.name) + (isSatisfactionScale ? ' (1-5 scale, excluding N/A)' : ''),
@@ -294,9 +307,10 @@ export function generateAllVisualizations(
           visualization: 'bar',
           data,
           n: validValues.length,
+          recommendations,
         });
       } else {
-        // Show average for continuous numbers
+        // Show average for continuous numbers (no chart recommendations for single-value displays)
         const avg = validValues.reduce((sum, v) => sum + v, 0) / validValues.length;
         visualizations.push({
           columnName: column.name,
@@ -305,6 +319,7 @@ export function generateAllVisualizations(
           visualization: 'average',
           data: [{ name: 'Average', value: Math.round(avg * 10) / 10, count: validValues.length }],
           n: validValues.length,
+          recommendations: [], // No chart recommendations for average display
         });
       }
     }
@@ -318,6 +333,7 @@ export function generateAllVisualizations(
         visualization: 'text_analysis',
         data: [],
         n: values.length,
+        recommendations: [], // No chart recommendations for text analysis
       });
     }
   });
