@@ -214,7 +214,7 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
                   color: theme.colors.textSecondary,
                 }}
               >
-                Statistical Patterns Detected:
+                Key Insights:
               </h3>
               {insights.map((insight) => {
                 const badge = getConfidenceBadge(insight.confidence);
