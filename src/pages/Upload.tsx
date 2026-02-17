@@ -433,7 +433,7 @@ export function Upload() {
           {/* Cleaning Report */}
           {cleaningReport && !isProcessing && currentFile && (
             <div className="mt-8">
-              <CleaningReportDisplay report={cleaningReport} fileName={currentFile.name} />
+              <CleaningReportDisplay report={cleaningReport} fileName={currentFile.name} columns={previewData?.columns} />
             </div>
           )}
 
