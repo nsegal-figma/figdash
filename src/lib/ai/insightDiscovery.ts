@@ -25,35 +25,95 @@ interface ColumnGroup {
 // Helpers
 // ---------------------------------------------------------------------------
 
-const SKIP_COLUMNS = ['responseid', 'response_id', 'id', 'timestamp', 'submitted', 'email'];
+const SKIP_COLUMNS = [
+  'responseid', 'response_id', 'id', 'timestamp', 'submitted',
+  'email', 'person id', 'name', 'employer', 'job title',
+];
 
 function shouldSkip(name: string): boolean {
   const lower = name.toLowerCase();
-  return SKIP_COLUMNS.some(s => lower.includes(s));
+  return SKIP_COLUMNS.some(s => lower === s || lower.includes(s));
 }
 
 /**
- * Turn raw column name like "Q1_Discover" or "Q4_Satisfaction_PrimaryResearch"
- * into a human-readable label: "Discover" or "Primary Research".
+ * Turn raw column name into a short, human-readable label.
+ * Handles both coded names (Q1_Discover) and full question text.
  */
 function humanize(name: string, prefix?: string): string {
   let cleaned = name;
+
   // Strip the prefix (e.g. "Q1_")
   if (prefix) {
     cleaned = cleaned.replace(new RegExp(`^${escapeRegex(prefix)}`, 'i'), '');
   }
-  // Strip leading underscores
   cleaned = cleaned.replace(/^_+/, '');
-  // Split on underscores / camelCase
-  cleaned = cleaned
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    .replace(/_/g, ' ')
-    .trim();
-  // Title-case each word
-  return cleaned
-    .split(/\s+/)
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(' ');
+
+  // If it's a short coded name (< 60 chars, no spaces or few), use simple title-case
+  if (cleaned.length < 60 && (cleaned.split(' ').length <= 4 || !cleaned.includes(' '))) {
+    cleaned = cleaned
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/_/g, ' ')
+      .trim();
+    return cleaned
+      .split(/\s+/)
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ');
+  }
+
+  // Full question text — extract the key concept
+  return extractQuestionTopic(cleaned);
+}
+
+/**
+ * Extract a short topic label from a full survey question string.
+ * e.g. "How would you describe your level of experience with editing in Figma Design?" → "Figma Design experience level"
+ */
+function extractQuestionTopic(question: string): string {
+  let q = question.replace(/[?:]+$/, '').trim();
+
+  // Strip common question prefixes
+  const prefixPatterns = [
+    /^which of the following best describes\s+/i,
+    /^how would you describe\s+/i,
+    /^how well does\s+/i,
+    /^how does\s+/i,
+    /^overall[, ]+how well does\s+/i,
+    /^overall[, ]+how\s+/i,
+    /^what is\s+(the\s+)?(primary\s+)?/i,
+    /^what do you primarily\s+/i,
+    /^when editing[^,]*,\s*/i,
+    /^in your current[^,]*,\s*/i,
+    /^in\s+\d+-\d+\s+sentences?,?\s*/i,
+    /^please\s+(briefly\s+)?/i,
+    /^are you currently\s+/i,
+  ];
+
+  for (const pattern of prefixPatterns) {
+    q = q.replace(pattern, '');
+  }
+
+  // Strip trailing parentheticals
+  q = q.replace(/\s*\([^)]*\)\s*$/, '').trim();
+
+  // If still long, take a meaningful truncation
+  if (q.length > 60) {
+    // Try to cut at a natural phrase boundary
+    const cutPoints = [' for ', ' when ', ' in your ', ' you '];
+    for (const cp of cutPoints) {
+      const idx = q.toLowerCase().indexOf(cp);
+      if (idx > 15 && idx < 55) {
+        q = q.substring(0, idx);
+        break;
+      }
+    }
+    // Final fallback: hard truncate
+    if (q.length > 60) {
+      q = q.substring(0, 57) + '...';
+    }
+  }
+
+  // Capitalize first letter
+  return q.charAt(0).toUpperCase() + q.slice(1);
 }
 
 function escapeRegex(s: string): string {
@@ -377,8 +437,9 @@ function detectSegmentDifferences(surveyData: SurveyData): Insight[] {
 
   for (const segmentCol of segmentVars) {
     const segmentDist = getDistribution(segmentCol.name, surveyData.rows);
+    const minSegSize = Math.max(5, Math.floor(surveyData.totalRows * 0.05));
     const segments = Array.from(segmentDist.entries())
-      .filter(([, count]) => count >= 3) // Need minimum sample size
+      .filter(([, count]) => count >= minSegSize)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5); // Top 5 segments by count
 
@@ -510,6 +571,146 @@ function detectCorrelations(surveyData: SurveyData): Insight[] {
 }
 
 /**
+ * Detect interesting distributions on ordinal/scale questions
+ * (satisfaction, experience, comparisons).
+ */
+function detectOrdinalDistributions(surveyData: SurveyData): Insight[] {
+  const insights: Insight[] = [];
+
+  const ordinalKeywords = [
+    'how well', 'how would', 'how does', 'overall', 'satisfaction',
+    'experience', 'compare', 'level of', 'describe your',
+  ];
+
+  const categoricalCols = surveyData.columns.filter(
+    c => c.type === 'categorical' && !shouldSkip(c.name) &&
+    c.uniqueValues && c.uniqueValues.length >= 3 &&
+    ordinalKeywords.some(k => c.name.toLowerCase().includes(k)),
+  );
+
+  for (const col of categoricalCols) {
+    const dist = getDistribution(col.name, surveyData.rows);
+    const total = Array.from(dist.values()).reduce((s, v) => s + v, 0);
+    if (total < 5) continue;
+
+    const sorted = Array.from(dist.entries()).sort((a, b) => b[1] - a[1]);
+    const topValue = sorted[0];
+    const topPct = topValue[1] / total;
+    const label = humanize(col.name);
+
+    // Report top response and runner-up
+    if (sorted.length >= 2 && topPct >= 0.25) {
+      const runner = sorted[1];
+      const topTwoPct = (topValue[1] + runner[1]) / total;
+
+      insights.push({
+        id: `ordinal-${col.name}`,
+        type: 'trend',
+        title: `Most common response for ${label}: "${topValue[0]}" (${(topPct * 100).toFixed(0)}%)`,
+        description: `"${topValue[0]}" leads at ${(topPct * 100).toFixed(0)}%, followed by "${runner[0]}" at ${((runner[1] / total) * 100).toFixed(0)}%. Together these account for ${(topTwoPct * 100).toFixed(0)}% of ${total} responses.`,
+        confidence: 0.85,
+        importance: Math.min(0.5 + topPct * 0.4, 0.8),
+        variables: [col.name],
+        supportingData: { distribution: Object.fromEntries(dist), total },
+      });
+    }
+  }
+
+  return insights;
+}
+
+/**
+ * Compare segment variables against categorical outcome variables
+ * (e.g. Quota Group vs satisfaction, experience level, tool comparison).
+ */
+function detectSegmentCategoricalDifferences(surveyData: SurveyData): Insight[] {
+  const insights: Insight[] = [];
+
+  const segmentKeywords = [
+    'role', 'company', 'size', 'department', 'team', 'seniority',
+    'experience', 'title', 'group', 'quota', 'function', 'segment',
+  ];
+
+  const segmentVars = surveyData.columns.filter(c =>
+    c.type === 'categorical' && !shouldSkip(c.name) &&
+    c.uniqueValues && c.uniqueValues.length >= 2 && c.uniqueValues.length <= 6 &&
+    segmentKeywords.some(k => c.name.toLowerCase().includes(k)),
+  );
+
+  // Outcome variables: ordinal/scale questions worth comparing across segments
+  const outcomeKeywords = [
+    'how well', 'how does', 'overall', 'satisfaction', 'compare',
+    'support', 'frustrat', 'experience', 'describe your',
+  ];
+
+  const outcomeCols = surveyData.columns.filter(c =>
+    c.type === 'categorical' && !shouldSkip(c.name) &&
+    c.uniqueValues && c.uniqueValues.length >= 3 &&
+    outcomeKeywords.some(k => c.name.toLowerCase().includes(k)),
+  );
+
+  for (const segCol of segmentVars) {
+    const segDist = getDistribution(segCol.name, surveyData.rows);
+    // Require meaningful segment sizes: at least 10 or 8% of total
+    const minSegSize = Math.max(10, Math.floor(surveyData.totalRows * 0.08));
+    const segments = Array.from(segDist.entries())
+      .filter(([, count]) => count >= minSegSize)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4);
+
+    if (segments.length < 2) continue;
+
+    const segLabel = humanize(segCol.name);
+
+    for (const outCol of outcomeCols) {
+      if (outCol.name === segCol.name) continue;
+      const outLabel = humanize(outCol.name);
+
+      // For each segment, find the most common response to the outcome question
+      const segTopResponses: { segment: string; topValue: string; topPct: number; n: number }[] = [];
+
+      for (const [segValue] of segments) {
+        const segRows = surveyData.rows.filter(r => String(r[segCol.name]) === segValue);
+        const outDist = getDistribution(outCol.name, segRows);
+        const outTotal = Array.from(outDist.values()).reduce((s, v) => s + v, 0);
+        if (outTotal < 3) continue;
+
+        const sorted = Array.from(outDist.entries()).sort((a, b) => b[1] - a[1]);
+        segTopResponses.push({
+          segment: segValue,
+          topValue: sorted[0][0],
+          topPct: sorted[0][1] / outTotal,
+          n: outTotal,
+        });
+      }
+
+      if (segTopResponses.length < 2) continue;
+
+      // Check if different segments have different top answers
+      const uniqueTopValues = new Set(segTopResponses.map(s => s.topValue));
+      if (uniqueTopValues.size >= 2) {
+        const descriptions = segTopResponses
+          .map(s => `${s.segment}: "${s.topValue}" (${(s.topPct * 100).toFixed(0)}%, n=${s.n})`)
+          .join('; ');
+
+        insights.push({
+          id: `segcat-${segCol.name}-${outCol.name}`,
+          type: 'segment',
+          title: `${segLabel} groups differ on ${outLabel}`,
+          description: `Top response by segment — ${descriptions}.`,
+          confidence: 0.75,
+          importance: 0.7,
+          variables: [segCol.name, outCol.name],
+          supportingData: { segTopResponses },
+        });
+      }
+    }
+  }
+
+  return insights;
+}
+
+/**
  * High-level summary stats that are genuinely interesting
  * (e.g. awareness-vs-usage gaps for standalone columns).
  */
@@ -569,6 +770,8 @@ export function discoverInsights(surveyData: SurveyData): Insight[] {
   const allInsights: Insight[] = [
     ...detectGroupTrends(surveyData),
     ...detectCrossGroupPatterns(surveyData),
+    ...detectOrdinalDistributions(surveyData),
+    ...detectSegmentCategoricalDifferences(surveyData),
     ...detectMeaningfulAnomalies(surveyData),
     ...detectSegmentDifferences(surveyData),
     ...detectCorrelations(surveyData),
