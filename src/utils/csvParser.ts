@@ -163,13 +163,18 @@ export function detectDataIssues(rawData: string[][]): DataIssues {
     issues.suggestedRowsToSkip = rowsToSkip;
   }
 
-  // Alternative check: if first data row has very long text in multiple columns
-  // This might indicate row 1 has question codes and row 2 has question text
+  // Alternative check: if first row has SHORT code-like headers and second row
+  // has long question text, this indicates a multi-header structure.
+  // Only flag if the first row is mostly short (code-like) — if the first row
+  // already has long question text as headers, the second row having long text
+  // just means the survey has long free-text responses.
   if (!issues.hasMultipleHeaderRows && rawData.length > 1) {
     const secondRow = rawData[1];
+    const shortHeaderCount = firstRow.filter(cell => !cell || cell.length <= 50).length;
+    const firstRowMostlyShort = shortHeaderCount > firstRow.length * 0.7;
     const longTextCells = secondRow.filter(cell => cell && cell.length > 50).length;
 
-    if (longTextCells > firstRow.length * 0.3) {
+    if (firstRowMostlyShort && longTextCells > firstRow.length * 0.3) {
       issues.hasMultipleHeaderRows = true;
       issues.detectedHeaderRowIndex = 1;
       issues.suggestedHeaderRowIndex = 1;

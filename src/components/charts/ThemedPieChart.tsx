@@ -78,8 +78,8 @@ function CustomLabel({
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-  // Only show label if slice is > 5%
-  if (percent < 0.05) return null;
+  // Only show label if slice is > 3%
+  if (percent < 0.03) return null;
 
   const percentValue = (percent * 100).toFixed(theme.dataLabels.percentageDecimals);
 
@@ -231,8 +231,9 @@ export function ThemedPieChart({
               innerRadius={responsiveInnerRadius}
               outerRadius={responsiveOuterRadius}
               paddingAngle={data.length > 1 ? 2 : 0}
+              minAngle={3}
               dataKey="value"
-              labelLine={showLabels}
+              labelLine={showLabels ? { strokeWidth: 1 } : false}
               label={
                 showLabels
                   ? ((props: Record<string, unknown>) => (
@@ -250,8 +251,7 @@ export function ThemedPieChart({
                     )) as unknown as boolean
                   : undefined
               }
-              animationDuration={theme.effects.animationDuration}
-              animationEasing={theme.effects.animationEasing === 'linear' ? 'linear' : 'ease-out'}
+              isAnimationActive={false}
             >
               {data.map((item, index) => {
                 const emphasis = storytelling?.getEmphasisForBar(item.name);
@@ -276,13 +276,14 @@ export function ThemedPieChart({
             {showLegend && (
               <Legend
                 verticalAlign="bottom"
-                height={36}
+                height={48}
                 iconType={theme.shapes.legendSwatchShape === 'circle' ? 'circle' : 'square'}
                 iconSize={theme.layout.legendSwatchSize}
                 wrapperStyle={{
                   fontFamily: styles.fontFamily,
                   fontSize: styles.legendFontSize,
                   color: theme.colors.textSecondary,
+                  paddingTop: '12px',
                 }}
               />
             )}

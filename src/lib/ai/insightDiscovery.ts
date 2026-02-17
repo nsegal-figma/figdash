@@ -360,14 +360,20 @@ function detectCrossGroupPatterns(surveyData: SurveyData): Insight[] {
  * Find meaningful anomalies in non-grouped categorical columns.
  * Skips trivial binary skew (Yes/No where one side > 50% is expected).
  */
-function detectMeaningfulAnomalies(surveyData: SurveyData): Insight[] {
+function detectMeaningfulAnomalies(
+  surveyData: SurveyData,
+  options?: { surveyType?: 'regular' | 'screener' },
+): Insight[] {
   const insights: Insight[] = [];
   const groupedNames = new Set(
     detectColumnGroups(surveyData.columns).flatMap(g => g.columns.map(c => c.name)),
   );
 
   const categoricalColumns = surveyData.columns.filter(
-    c => c.type === 'categorical' && !shouldSkip(c.name) && !groupedNames.has(c.name),
+    c => c.type === 'categorical' && !shouldSkip(c.name) && !groupedNames.has(c.name) &&
+    // Skip columns whose name matches a response value (CSV parsing artifact)
+    !(c.uniqueValues && c.uniqueValues.length <= 3 &&
+      c.uniqueValues.some(v => v.toLowerCase() === c.name.trim().toLowerCase())),
   );
 
   for (const column of categoricalColumns) {
@@ -399,7 +405,8 @@ function detectMeaningfulAnomalies(surveyData: SurveyData): Insight[] {
     }
 
     // Very extreme binary skew (>85%) is noteworthy
-    if (binary && topPct >= 0.85) {
+    // Skip for screeners — unanimous Yes/No is by design, not an insight
+    if (binary && topPct >= 0.85 && options?.surveyType !== 'screener') {
       const label = humanize(column.name);
       const pct = (topPct * 100).toFixed(0);
       insights.push({
@@ -777,8 +784,7 @@ export function discoverInsights(
     ...detectCrossGroupPatterns(surveyData),
     ...detectOrdinalDistributions(surveyData),
     ...detectSegmentCategoricalDifferences(surveyData),
-    // Screener surveys have unanimous responses by design — skip anomaly detection
-    ...(options?.surveyType === 'screener' ? [] : detectMeaningfulAnomalies(surveyData)),
+    ...detectMeaningfulAnomalies(surveyData, options),
     ...detectSegmentDifferences(surveyData),
     ...detectCorrelations(surveyData),
     ...detectStandalonePatterns(surveyData),

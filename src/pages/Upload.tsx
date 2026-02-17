@@ -360,6 +360,33 @@ export function Upload() {
           </div>
         </div>
 
+        {/* Survey Type Toggle */}
+        <div className="mb-8 flex items-center gap-3">
+          <span className="text-sm font-semibold text-gray-900">Survey type:</span>
+          <div className="inline-flex rounded-lg border border-gray-300 bg-gray-100 p-1">
+            <button
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                surveyType === 'regular'
+                  ? 'bg-white text-gray-900 shadow-sm border border-gray-300'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+              onClick={() => setSurveyType('regular')}
+            >
+              Regular Survey
+            </button>
+            <button
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                surveyType === 'screener'
+                  ? 'bg-white text-gray-900 shadow-sm border border-gray-300'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+              onClick={() => setSurveyType('screener')}
+            >
+              Screener
+            </button>
+          </div>
+        </div>
+
         {/* Upload Section */}
         <div>
           {/* Show FileUpload only if no file selected */}
@@ -399,35 +426,6 @@ export function Upload() {
               onClean={handleCleanData}
               onSkip={handleSkipCleaning}
             />
-          )}
-
-          {/* Survey Type Toggle */}
-          {processedSurveyData && currentStep === 'quality' && (
-            <div className="mb-4 flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700">Survey type:</span>
-              <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5">
-                <button
-                  className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
-                    surveyType === 'regular'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                  onClick={() => setSurveyType('regular')}
-                >
-                  Regular Survey
-                </button>
-                <button
-                  className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
-                    surveyType === 'screener'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                  onClick={() => setSurveyType('screener')}
-                >
-                  Screener
-                </button>
-              </div>
-            </div>
           )}
 
           {/* Advanced Cleaning Mode Selector */}

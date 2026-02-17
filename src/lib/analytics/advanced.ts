@@ -241,6 +241,15 @@ export function generateAllVisualizations(
 
     if (values.length === 0) return;
 
+    // Skip columns whose name looks like a response value (CSV parsing artifact)
+    // e.g. a column named "Yes" with values ["Yes", "No"] is clearly a misidentified header
+    if (column.type === 'categorical' && column.uniqueValues && column.uniqueValues.length <= 3) {
+      const nameLower = column.name.trim().toLowerCase();
+      if (column.uniqueValues.some(v => v.toLowerCase() === nameLower)) {
+        return;
+      }
+    }
+
     // CATEGORICAL: Show frequency distribution
     if (column.type === 'categorical') {
       const counts = new Map<string, number>();
@@ -343,12 +352,14 @@ export function generateAllVisualizations(
 }
 
 function formatColumnTitle(columnName: string): string {
-  // Convert "Q1_Discover" to "Q1: Discover"
-  // Convert "Q4_Satisfaction_PrimaryResearch" to "Q4: Satisfaction - Primary Research"
+  // If it already looks like a full question/sentence, use as-is
+  if (columnName.length > 30 && columnName.includes(' ')) {
+    return columnName;
+  }
 
   let title = columnName;
 
-  // Handle Q# patterns
+  // Handle Q# patterns: "Q1_Discover" → "Q1: Discover"
   const qMatch = columnName.match(/^(Q\d+)_(.+)$/);
   if (qMatch) {
     const qNum = qMatch[1];
@@ -358,7 +369,7 @@ function formatColumnTitle(columnName: string): string {
       .trim();
     title = `${qNum}: ${rest}`;
   } else {
-    // Just clean up underscores and camelCase
+    // Clean up underscores and camelCase for short coded names
     title = columnName
       .replace(/_/g, ' ')
       .replace(/([A-Z])/g, ' $1')
