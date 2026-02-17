@@ -23,6 +23,7 @@ interface SurveyStore {
   insights: Insight[];
   executiveSummary: ExecutiveSummary | null;
   isGeneratingInsights: boolean;
+  surveyType: 'regular' | 'screener';
 
   // Chart Type Selections
   chartTypeSelections: Map<string, ChartType>;
@@ -50,6 +51,7 @@ interface SurveyStore {
   setInsights: (insights: Insight[]) => void;
   setExecutiveSummary: (summary: ExecutiveSummary) => void;
   setIsGeneratingInsights: (isGenerating: boolean) => void;
+  setSurveyType: (type: 'regular' | 'screener') => void;
 
   // Chart Type Actions
   setChartType: (columnName: string, type: ChartType) => void;
@@ -80,6 +82,7 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   insights: [],
   executiveSummary: null,
   isGeneratingInsights: false,
+  surveyType: 'regular',
 
   // Chart Type Selections
   chartTypeSelections: new Map(),
@@ -142,6 +145,7 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   setInsights: (insights) => set({ insights }),
   setExecutiveSummary: (summary) => set({ executiveSummary: summary }),
   setIsGeneratingInsights: (isGenerating) => set({ isGeneratingInsights: isGenerating }),
+  setSurveyType: (type) => set({ surveyType: type }),
 
   // Chart Type Actions
   setChartType: (columnName, type) =>
@@ -181,6 +185,7 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
       cleaningSettings: null,
       cleaningMode: null,
       isCleaningInProgress: false,
+      surveyType: 'regular',
     }),
 }));
 

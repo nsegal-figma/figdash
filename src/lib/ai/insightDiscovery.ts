@@ -385,11 +385,12 @@ function detectMeaningfulAnomalies(surveyData: SurveyData): Insight[] {
     // For multi-category columns, flag strong dominance
     if (!binary && topPct > 0.6) {
       const label = humanize(column.name);
+      const pct = (topPct * 100).toFixed(0);
       insights.push({
         id: `anomaly-${column.name}-dominant`,
         type: 'insight',
-        title: `${sorted[0][0]} dominates ${label} responses`,
-        description: `${sorted[0][0]} accounts for ${(topPct * 100).toFixed(0)}% of ${label} responses (${sorted[0][1]} of ${total}). The next most common: ${sorted[1][0]} at ${((sorted[1][1] / total) * 100).toFixed(0)}%.`,
+        title: `${label}: "${sorted[0][0]}" leads at ${pct}%`,
+        description: `${sorted[0][1]} of ${total} respondents selected "${sorted[0][0]}". Next most common: "${sorted[1][0]}" at ${((sorted[1][1] / total) * 100).toFixed(0)}%.`,
         confidence: 0.85,
         importance: Math.min(0.4 + topPct * 0.4, 0.8),
         variables: [column.name],
@@ -400,11 +401,12 @@ function detectMeaningfulAnomalies(surveyData: SurveyData): Insight[] {
     // Very extreme binary skew (>85%) is noteworthy
     if (binary && topPct >= 0.85) {
       const label = humanize(column.name);
+      const pct = (topPct * 100).toFixed(0);
       insights.push({
         id: `anomaly-${column.name}-extreme`,
         type: 'insight',
-        title: `Near-unanimous agreement on ${label}`,
-        description: `${(topPct * 100).toFixed(0)}% of respondents selected "${sorted[0][0]}" for ${label}, suggesting strong consensus.`,
+        title: `${label}: ${pct}% selected "${sorted[0][0]}"`,
+        description: `Strong consensus — ${sorted[0][1]} of ${total} respondents chose "${sorted[0][0]}" over "${sorted[1][0]}".`,
         confidence: 0.9,
         importance: 0.6,
         variables: [column.name],
@@ -766,13 +768,17 @@ function detectStandalonePatterns(surveyData: SurveyData): Insight[] {
  * Analyze survey data and return top insights, using column grouping
  * and contextual analysis instead of naive per-column statistics.
  */
-export function discoverInsights(surveyData: SurveyData): Insight[] {
+export function discoverInsights(
+  surveyData: SurveyData,
+  options?: { surveyType?: 'regular' | 'screener' },
+): Insight[] {
   const allInsights: Insight[] = [
     ...detectGroupTrends(surveyData),
     ...detectCrossGroupPatterns(surveyData),
     ...detectOrdinalDistributions(surveyData),
     ...detectSegmentCategoricalDifferences(surveyData),
-    ...detectMeaningfulAnomalies(surveyData),
+    // Screener surveys have unanimous responses by design — skip anomaly detection
+    ...(options?.surveyType === 'screener' ? [] : detectMeaningfulAnomalies(surveyData)),
     ...detectSegmentDifferences(surveyData),
     ...detectCorrelations(surveyData),
     ...detectStandalonePatterns(surveyData),

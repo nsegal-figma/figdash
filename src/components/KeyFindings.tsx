@@ -32,9 +32,9 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
   };
 
   const getConfidenceBadge = (confidence: number) => {
-    if (confidence > 0.8) return { label: 'High', color: 'bg-green-100 text-green-800' };
-    if (confidence > 0.6) return { label: 'Med', color: 'bg-blue-100 text-blue-800' };
-    return { label: 'Low', color: 'bg-gray-100 text-gray-800' };
+    if (confidence > 0.8) return { label: 'High confidence', color: 'bg-green-100 text-green-800' };
+    if (confidence > 0.6) return { label: 'Med confidence', color: 'bg-blue-100 text-blue-800' };
+    return { label: 'Low confidence', color: 'bg-gray-100 text-gray-800' };
   };
 
   if (insights.length === 0 && !isLoading) return null;
@@ -261,24 +261,6 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
                       >
                         {insight.description}
                       </p>
-                      {insight.variables.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1">
-                          {insight.variables.map((variable, idx) => (
-                            <span
-                              key={idx}
-                              className="rounded-md px-2 py-0.5"
-                              style={{
-                                fontFamily: styles.fontFamily,
-                                fontSize: styles.axisTickFontSize,
-                                backgroundColor: `${theme.colors.borderColor}60`,
-                                color: theme.colors.textSecondary,
-                              }}
-                            >
-                              {variable}
-                            </span>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
                 );
