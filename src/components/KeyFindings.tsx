@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, AlertTriangle, TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sparkles, BarChart3, TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
 import type { Insight } from '../lib/ai/insightDiscovery';
 import type { ExecutiveSummary } from '../lib/ai/executiveSummary';
 import { Card } from './Card';
@@ -18,8 +18,8 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
 
   const getInsightIcon = (type: Insight['type']) => {
     switch (type) {
-      case 'anomaly':
-        return <AlertTriangle className="h-4 w-4 text-orange-600" />;
+      case 'insight':
+        return <BarChart3 className="h-4 w-4 text-indigo-600" />;
       case 'correlation':
         return <TrendingUp className="h-4 w-4 text-blue-600" />;
       case 'segment':

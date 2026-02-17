@@ -95,7 +95,7 @@ function generateLocalSummary(
   const trends = insights.filter(i => i.type === 'trend');
   const segments = insights.filter(i => i.type === 'segment');
   const surprises = insights.filter(i => i.type === 'surprise');
-  const anomalies = insights.filter(i => i.type === 'anomaly');
+  const anomalies = insights.filter(i => i.type === 'insight');
   const correlations = insights.filter(i => i.type === 'correlation');
 
   // Build overview from actual insights

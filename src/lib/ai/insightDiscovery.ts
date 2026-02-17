@@ -3,7 +3,7 @@ import { calculatePearsonCorrelation } from '../analytics/advanced';
 
 export interface Insight {
   id: string;
-  type: 'anomaly' | 'correlation' | 'segment' | 'trend' | 'surprise';
+  type: 'insight' | 'correlation' | 'segment' | 'trend' | 'surprise';
   title: string;
   description: string;
   confidence: number; // 0-1
@@ -387,7 +387,7 @@ function detectMeaningfulAnomalies(surveyData: SurveyData): Insight[] {
       const label = humanize(column.name);
       insights.push({
         id: `anomaly-${column.name}-dominant`,
-        type: 'anomaly',
+        type: 'insight',
         title: `${sorted[0][0]} dominates ${label} responses`,
         description: `${sorted[0][0]} accounts for ${(topPct * 100).toFixed(0)}% of ${label} responses (${sorted[0][1]} of ${total}). The next most common: ${sorted[1][0]} at ${((sorted[1][1] / total) * 100).toFixed(0)}%.`,
         confidence: 0.85,
@@ -402,7 +402,7 @@ function detectMeaningfulAnomalies(surveyData: SurveyData): Insight[] {
       const label = humanize(column.name);
       insights.push({
         id: `anomaly-${column.name}-extreme`,
-        type: 'anomaly',
+        type: 'insight',
         title: `Near-unanimous agreement on ${label}`,
         description: `${(topPct * 100).toFixed(0)}% of respondents selected "${sorted[0][0]}" for ${label}, suggesting strong consensus.`,
         confidence: 0.9,
