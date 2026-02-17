@@ -1,36 +1,48 @@
 # FigDash
 
-Dynamic survey analytics platform with AI-powered insights and advanced visualizations.
+Dynamic survey analytics platform with AI-powered insights, advanced visualizations, and a comprehensive theming system.
 
 ## Features
 
 ### Core Capabilities
 - **Dynamic Column Detection** - Automatically processes ANY CSV structure
 - **AI-Powered Analysis** - Real OpenAI GPT-4 integration for text insights
-- **Advanced Visualizations** - Horizontal bars, cross-tabs (stacked/grouped)
-- **Smart Suggestions** - Statistical analysis suggests interesting relationships (Cramér's V)
+- **Smart Chart Recommendations** - Analyzes data characteristics and recommends the best chart type
+- **Visual Storytelling** - Automatic pattern detection with editable annotations
+
+### Chart Types
+- **Horizontal Bar** - Best for categories with long labels
+- **Vertical Bar** - Classic bar chart using Recharts
+- **Pie / Donut** - Part-to-whole visualizations with themed labels
+- **Lollipop** - Clean ranking visualization with dots
+
+### Theming System
+- 8 curated color palettes with light-to-dark gradients
+- Full theme editor with live preview
+- Preset themes (Default, Minimal, Bold, etc.)
+- Theme import/export for sharing
+- All charts respect theme settings (fonts, colors, spacing, borders, animations)
 
 ### Visualization Tools
-- 8 curated color palettes with light-to-dark gradients
+- Per-chart type selector with smart recommendations
 - Per-chart filtering with chip UI
 - Global sort control (high-to-low / low-to-high)
 - Editable chart titles with persistence
 - Hover tooltips showing percentages and counts
 - Cross-tab builder for relationship analysis
-- Improved legend layout for long labels
 
 ### Export Options
 - Per-chart PNG export (chart only or with table)
+- SVG export for editable charts in Figma
+- Clipboard copy for Figma Slides integration
 - Full dashboard PDF export
-- High-DPI output optimized for Figma Slides
-- Custom titles reflected in exports
+- High-DPI output optimized for presentations
 
 ### AI & Analytics
 - Real-time OpenAI integration for text analysis
 - AI summaries pre-generated during upload
-- Representative quote extraction
-- Sentiment analysis with key themes
-- Enhanced demo dataset with 100 varied responses
+- Representative quote extraction with sentiment
+- Statistical analysis (Cramer's V) for cross-tab suggestions
 
 ## Getting Started
 
@@ -70,61 +82,116 @@ Open [http://localhost:5173](http://localhost:5173)
 npm run build
 ```
 
+### Tests
+
+```bash
+npm test
+```
+
+348 tests across 18 test files covering the design system, chart primitives, and chart components.
+
+### Storybook
+
+```bash
+npm run storybook
+```
+
+Interactive component documentation for all chart types.
+
+## Architecture
+
+### Tech Stack
+
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Frontend | React | 19 |
+| Language | TypeScript | 5.9 |
+| Build | Vite | 7.x |
+| State | Zustand | 5.x |
+| Routing | React Router | 7.x |
+| Charts | Recharts | 3.3 |
+| Styling | Tailwind CSS | 3.4 |
+| Animation | Framer Motion | 12.x |
+| CSV | PapaParse | 5.5 |
+
+### Source Structure
+
+```
+src/
+  App.tsx                    # Router with lazy-loaded pages + page transitions
+  pages/
+    Upload.tsx               # CSV upload with drag-and-drop
+    Dashboard.tsx            # Main visualization dashboard
+    Insights.tsx             # AI-generated text analysis
+  components/
+    charts/                  # Themed chart components
+      ChartRenderer.tsx      # Dynamic chart type switcher
+      HorizontalBarChart.tsx # Horizontal bars with storytelling
+      VerticalBarChart.tsx   # Recharts vertical bars
+      ThemedPieChart.tsx     # Pie + donut charts
+      LollipopChart.tsx      # Lollipop chart with dots
+    charts-v2/               # Design system chart primitives
+      BarChart/              # Base bar chart
+      LineChart/             # Line + sparkline
+      AreaChart/             # Area + stacked area
+      PieChart/              # Base pie/donut
+      primitives/            # Shared: axes, grid, tooltip, legend, etc.
+    ChartTypeSelector.tsx    # Accessible chart type dropdown
+    ThemeEditor/             # Theme editing panel
+    storytelling/            # Annotation overlays
+  hooks/
+    useChartTheme.ts         # Theme consumption hook
+    useReducedMotion.ts      # Accessibility: reduced motion
+    useStorytelling.ts       # Pattern detection + annotations
+    usePDFExport.ts          # Dashboard PDF export
+    useSVGExport.ts          # SVG export for Figma
+  lib/
+    analytics/               # Data analysis engine
+      advanced.ts            # Visualization generator
+      chartRecommendations.ts # Smart chart type suggestions
+    themes/                  # Theme system
+      defaultTheme.ts        # Default theme definition
+      presetThemes.ts        # Built-in theme presets
+      themeUtils.ts          # CSS helpers
+    designTokens/            # Design token system
+    colorPalettes.ts         # 8 color palettes
+    storytelling/            # Pattern detection algorithms
+  stores/
+    useSurveyStore.ts        # Survey data + UI state
+    useThemeStore.ts         # Theme persistence
+  types/
+    chartTypes.ts            # Chart type registry + recommendations
+    chartTheme.ts            # Theme type definitions
+    storytelling.ts          # Storytelling types
+```
+
+### Key Patterns
+
+**Chart Recommendation Engine**: Analyzes data characteristics (cardinality, ordinal patterns, distribution shape, dominant values) and recommends chart types with confidence scores.
+
+**Theme System**: All visual properties (colors, fonts, spacing, borders, animations) are defined in a `ChartTheme` object, consumed via `useChartTheme()`, and editable at runtime.
+
+**Code Splitting**: Pages are lazy-loaded with `React.lazy`. Vite splits vendor chunks (React, Recharts, Framer Motion, analytics) for optimal caching.
+
+**Accessibility**: Keyboard navigation on all interactive elements, ARIA labels, focus management, `prefers-reduced-motion` support via `useReducedMotion` hook.
+
 ## Usage
 
 1. **Upload** - Upload CSV file on the welcome page
 2. **Dashboard** - View all visualizations with:
+   - Chart type selector per question (with recommendations)
    - Sort control (high-to-low / low-to-high)
-   - Color palette selector (8 options)
+   - Color palette via theme editor
    - Per-chart filters
    - Editable titles (click to edit)
-   - Export charts individually
+   - Storytelling mode for pattern annotations
+   - Export charts (PNG, SVG, clipboard, PDF)
    - Create cross-tabs (suggested or custom)
 3. **Insights** - View AI-generated summaries and quotes
 
 ### Demo Data
 
 Test with `demo-data/enterprise-ai-survey-varied.csv` (100 responses, good variance for testing features).
-
-## Key Features in Detail
-
-### Dynamic Column Detection
-- Automatically detects column types (categorical, numeric, text)
-- Generates appropriate visualizations for each type
-- Works with ANY survey structure
-
-### Cross-Tab Builder
-- **Suggested Cross-Tabs**: Statistical analysis finds interesting relationships
-- **Custom Cross-Tabs**: Select any two variables
-- **Visualization Types**: Stacked bars or grouped bars
-- **Filtering**: Cross-tabs respect per-chart filters
-
-### Color Palettes
-- Default, Ocean, Sunset, Forest, Berry, Purple Haze, Earth Tones, Cool Grays
-- All palettes ordered light-to-dark for proper gradients
-- Highest values = darkest colors
-
-### Per-Chart Filtering
-- Filter any categorical/numeric variable
-- Multi-select chip UI
-- Updates charts and data tables
-- Global "Reset Filters" button
-
-### AI Text Analysis
-- Generates summaries in background during upload
-- Extracts representative quotes (mix of positive, negative, substantive)
-- Identifies key themes
-- Sentiment analysis included
-
-## Tech Stack
-
-- **React 19** + **TypeScript** + **Vite**
-- **Tailwind CSS** - Minimal shadcn-inspired design
-- **Zustand** - State management
-- **OpenAI API** - GPT-4 for text analysis
-- **html2canvas** + **jsPDF** - Export capabilities
-- **Framer Motion** - Smooth animations
-- **PapaParse** - CSV parsing
 
 ## Repository
 

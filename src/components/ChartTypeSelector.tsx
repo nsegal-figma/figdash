@@ -1,9 +1,9 @@
 /**
  * ChartTypeSelector Component
- * Dropdown for selecting chart type with recommendations
+ * Accessible dropdown for selecting chart type with recommendations
  */
 
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   BarChart3,
   BarChart2,
@@ -41,7 +41,6 @@ const CHART_ICONS: Record<string, React.ElementType> = {
   PieChart: PieChart,
   Circle: Circle,
   GitCommitHorizontal: GitCommitHorizontal,
-  // Fallback for other icons
   BarChart: BarChart3,
   Layers: BarChart3,
   ArrowLeftRight: BarChart3,
@@ -52,6 +51,10 @@ function getChartIcon(iconName: string): React.ElementType {
   return CHART_ICONS[iconName] || BarChart3;
 }
 
+// ============ Constants ============
+
+const IMPLEMENTED_TYPES: ChartType[] = ['horizontal-bar', 'vertical-bar', 'pie', 'donut', 'lollipop'];
+
 // ============ Main Component ============
 
 export function ChartTypeSelector({
@@ -60,7 +63,10 @@ export function ChartTypeSelector({
   onTypeChange,
 }: ChartTypeSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [focusIndex, setFocusIndex] = useState(-1);
   const { theme, styles } = useChartTheme();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const selectedConfig = CHART_TYPE_CONFIGS[selectedType];
   const SelectedIcon = getChartIcon(selectedConfig.icon);
@@ -68,31 +74,196 @@ export function ChartTypeSelector({
   // Get recommended types (confidence > 0.6)
   const recommendedTypes = recommendations.filter((r) => r.confidence >= 0.6);
 
+  // Build flat list of selectable items for keyboard navigation
+  const selectableItems = (() => {
+    const items: ChartType[] = [];
+    // Recommended first
+    for (const rec of recommendedTypes) {
+      if (IMPLEMENTED_TYPES.includes(rec.type)) items.push(rec.type);
+    }
+    // Then all charts not already in recommended
+    const categories = [
+      getChartTypesByCategory('bar'),
+      getChartTypesByCategory('part-to-whole'),
+      getChartTypesByCategory('ranking'),
+    ].flat();
+    for (const type of categories) {
+      if (IMPLEMENTED_TYPES.includes(type) && !items.includes(type)) {
+        items.push(type);
+      }
+    }
+    return items;
+  })();
+
+  const handleSelect = useCallback((type: ChartType) => {
+    onTypeChange(type);
+    setIsOpen(false);
+    setFocusIndex(-1);
+    triggerRef.current?.focus();
+  }, [onTypeChange]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!isOpen) {
+      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setIsOpen(true);
+        setFocusIndex(0);
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusIndex((prev) => Math.min(prev + 1, selectableItems.length - 1));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusIndex((prev) => Math.max(prev - 1, 0));
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        if (focusIndex >= 0 && focusIndex < selectableItems.length) {
+          handleSelect(selectableItems[focusIndex]);
+        }
+        break;
+      case 'Escape':
+        e.preventDefault();
+        setIsOpen(false);
+        setFocusIndex(-1);
+        triggerRef.current?.focus();
+        break;
+      case 'Home':
+        e.preventDefault();
+        setFocusIndex(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        setFocusIndex(selectableItems.length - 1);
+        break;
+    }
+  }, [isOpen, focusIndex, selectableItems, handleSelect]);
+
+  // Scroll focused item into view
+  useEffect(() => {
+    if (isOpen && focusIndex >= 0 && menuRef.current) {
+      const items = menuRef.current.querySelectorAll('[role="option"]');
+      items[focusIndex]?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [isOpen, focusIndex]);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target as Node) &&
+        !triggerRef.current?.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+        setFocusIndex(-1);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [isOpen]);
+
   // Get all available chart types grouped by category
-  const categories: Array<{
-    category: string;
-    label: string;
-    types: ChartType[];
-  }> = [
+  const categories = [
     { category: 'bar', label: CHART_CATEGORY_LABELS['bar'], types: getChartTypesByCategory('bar') },
     { category: 'part-to-whole', label: CHART_CATEGORY_LABELS['part-to-whole'], types: getChartTypesByCategory('part-to-whole') },
     { category: 'ranking', label: CHART_CATEGORY_LABELS['ranking'], types: getChartTypesByCategory('ranking') },
   ];
 
-  // Filter to only show types that are implemented
-  const implementedTypes: ChartType[] = ['horizontal-bar', 'vertical-bar', 'pie', 'donut', 'lollipop'];
+  const renderOption = (type: ChartType, rec?: ChartRecommendation) => {
+    const config = CHART_TYPE_CONFIGS[type];
+    const Icon = getChartIcon(config.icon);
+    const isSelected = type === selectedType;
+    const itemIndex = selectableItems.indexOf(type);
+    const isFocused = itemIndex === focusIndex;
+    const confidenceLabel = rec ? getConfidenceLabel(rec.confidence) : null;
 
-  const handleSelect = (type: ChartType) => {
-    onTypeChange(type);
-    setIsOpen(false);
+    return (
+      <div
+        key={type}
+        role="option"
+        aria-selected={isSelected}
+        tabIndex={-1}
+        onClick={() => handleSelect(type)}
+        onMouseEnter={() => setFocusIndex(itemIndex)}
+        className="flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors"
+        style={{
+          backgroundColor: isFocused
+            ? `${theme.colors.textPrimary}15`
+            : isSelected
+              ? `${theme.colors.textPrimary}10`
+              : undefined,
+          fontFamily: styles.fontFamily,
+          outline: 'none',
+        }}
+      >
+        <Icon
+          className="h-4 w-4 flex-shrink-0"
+          style={{ color: theme.colors.textSecondary }}
+          aria-hidden="true"
+        />
+        <div className="flex-1 text-left">
+          <div
+            className="flex items-center gap-2"
+            style={{
+              fontSize: styles.labelFontSize,
+              color: theme.colors.textPrimary,
+              fontWeight: isSelected ? 600 : 400,
+            }}
+          >
+            {config.label}
+            {rec?.isDefault && (
+              <Sparkles
+                className="h-3 w-3"
+                style={{ color: '#f59e0b' }}
+                aria-label="Default recommendation"
+              />
+            )}
+          </div>
+          {rec && (
+            <div
+              style={{
+                fontSize: styles.axisTickFontSize,
+                color: theme.colors.textMuted,
+              }}
+            >
+              {rec.reason}
+            </div>
+          )}
+        </div>
+        {confidenceLabel && (
+          <span
+            className="text-xs px-1.5 py-0.5 rounded"
+            style={{
+              backgroundColor: rec && rec.confidence >= 0.85 ? '#f59e0b20' : '#6b728020',
+              color: rec && rec.confidence >= 0.85 ? '#d97706' : theme.colors.textMuted,
+            }}
+          >
+            {confidenceLabel}
+          </span>
+        )}
+      </div>
+    );
   };
 
   return (
     <div className="relative" data-export-exclude>
       {/* Trigger Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 transition-colors hover:opacity-80"
+        ref={triggerRef}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          if (!isOpen) setFocusIndex(0);
+        }}
+        onKeyDown={handleKeyDown}
+        className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1"
         style={{
           fontFamily: styles.fontFamily,
           fontSize: styles.axisTickFontSize,
@@ -100,158 +271,76 @@ export function ChartTypeSelector({
           borderColor: theme.colors.borderColor,
           backgroundColor: theme.colors.cardBackground,
           color: theme.colors.textSecondary,
+          // @ts-expect-error CSS custom property for focus ring
+          '--tw-ring-color': theme.colors.textPrimary,
         }}
-        title="Change chart type"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-label={`Chart type: ${selectedConfig.label}. Click to change.`}
       >
-        <SelectedIcon className="h-3.5 w-3.5" />
+        <SelectedIcon className="h-3.5 w-3.5" aria-hidden="true" />
         <span className="hidden sm:inline">{selectedConfig.label}</span>
-        <ChevronDown className="h-3 w-3" />
+        <ChevronDown className="h-3 w-3" aria-hidden="true" />
       </button>
 
       {/* Dropdown */}
       {isOpen && (
-        <>
-          {/* Backdrop */}
-          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+        <div
+          ref={menuRef}
+          role="listbox"
+          aria-label="Select chart type"
+          aria-activedescendant={focusIndex >= 0 ? `chart-option-${selectableItems[focusIndex]}` : undefined}
+          onKeyDown={handleKeyDown}
+          className="absolute left-0 top-full z-20 mt-1 w-64 max-h-80 overflow-y-auto rounded-md border py-1 shadow-lg"
+          style={{
+            borderColor: theme.colors.borderColor,
+            backgroundColor: theme.colors.cardBackground,
+          }}
+        >
+          {/* Recommended Section */}
+          {recommendedTypes.length > 0 && (
+            <>
+              <div
+                className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"
+                style={{ color: theme.colors.textMuted }}
+                role="presentation"
+              >
+                Recommended
+              </div>
+              {recommendedTypes.map((rec) => {
+                if (!IMPLEMENTED_TYPES.includes(rec.type)) return null;
+                return renderOption(rec.type, rec);
+              })}
+              <div
+                className="my-1 border-t"
+                style={{ borderColor: theme.colors.borderColor }}
+                role="separator"
+              />
+            </>
+          )}
 
-          {/* Menu */}
+          {/* All Charts Section */}
           <div
-            className="absolute left-0 top-full z-20 mt-1 w-64 rounded-md border py-1 shadow-lg"
-            style={{
-              borderColor: theme.colors.borderColor,
-              backgroundColor: theme.colors.cardBackground,
-            }}
+            className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"
+            style={{ color: theme.colors.textMuted }}
+            role="presentation"
           >
-            {/* Recommended Section */}
-            {recommendedTypes.length > 0 && (
-              <>
-                <div
-                  className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: theme.colors.textMuted }}
-                >
-                  Recommended
-                </div>
-                {recommendedTypes.map((rec) => {
-                  const config = CHART_TYPE_CONFIGS[rec.type];
-                  if (!implementedTypes.includes(rec.type)) return null;
-                  const Icon = getChartIcon(config.icon);
-                  const confidenceLabel = getConfidenceLabel(rec.confidence);
-                  const isSelected = rec.type === selectedType;
-
-                  return (
-                    <button
-                      key={rec.type}
-                      onClick={() => handleSelect(rec.type)}
-                      className="w-full flex items-center gap-3 px-3 py-2 hover:opacity-80 transition-colors"
-                      style={{
-                        backgroundColor: isSelected ? `${theme.colors.textPrimary}10` : undefined,
-                        fontFamily: styles.fontFamily,
-                      }}
-                    >
-                      <Icon
-                        className="h-4 w-4 flex-shrink-0"
-                        style={{ color: theme.colors.textSecondary }}
-                      />
-                      <div className="flex-1 text-left">
-                        <div
-                          className="flex items-center gap-2"
-                          style={{
-                            fontSize: styles.labelFontSize,
-                            color: theme.colors.textPrimary,
-                            fontWeight: isSelected ? 600 : 400,
-                          }}
-                        >
-                          {config.label}
-                          {rec.isDefault && (
-                            <Sparkles
-                              className="h-3 w-3"
-                              style={{ color: '#f59e0b' }}
-                            />
-                          )}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: styles.axisTickFontSize,
-                            color: theme.colors.textMuted,
-                          }}
-                        >
-                          {rec.reason}
-                        </div>
-                      </div>
-                      {confidenceLabel && (
-                        <span
-                          className="text-xs px-1.5 py-0.5 rounded"
-                          style={{
-                            backgroundColor: rec.confidence >= 0.85 ? '#f59e0b20' : '#6b728020',
-                            color: rec.confidence >= 0.85 ? '#d97706' : theme.colors.textMuted,
-                          }}
-                        >
-                          {confidenceLabel}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-                <div
-                  className="my-1 border-t"
-                  style={{ borderColor: theme.colors.borderColor }}
-                />
-              </>
-            )}
-
-            {/* All Charts Section */}
-            <div
-              className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"
-              style={{ color: theme.colors.textMuted }}
-            >
-              All Charts
-            </div>
-            {categories.map((cat) => {
-              const availableTypes = cat.types.filter((t) => implementedTypes.includes(t));
-              if (availableTypes.length === 0) return null;
-
-              return (
-                <div key={cat.category}>
-                  {availableTypes.map((chartType) => {
-                    const config = CHART_TYPE_CONFIGS[chartType];
-                    const Icon = getChartIcon(config.icon);
-                    const isSelected = chartType === selectedType;
-                    // Don't show in "All Charts" if already in recommended
-                    if (recommendedTypes.some((r) => r.type === chartType)) return null;
-
-                    return (
-                      <button
-                        key={chartType}
-                        onClick={() => handleSelect(chartType)}
-                        className="w-full flex items-center gap-3 px-3 py-2 hover:opacity-80 transition-colors"
-                        style={{
-                          backgroundColor: isSelected ? `${theme.colors.textPrimary}10` : undefined,
-                          fontFamily: styles.fontFamily,
-                        }}
-                      >
-                        <Icon
-                          className="h-4 w-4 flex-shrink-0"
-                          style={{ color: theme.colors.textSecondary }}
-                        />
-                        <div className="flex-1 text-left">
-                          <div
-                            style={{
-                              fontSize: styles.labelFontSize,
-                              color: theme.colors.textPrimary,
-                              fontWeight: isSelected ? 600 : 400,
-                            }}
-                          >
-                            {config.label}
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              );
-            })}
+            All Charts
           </div>
-        </>
+          {categories.map((cat) => {
+            const availableTypes = cat.types.filter((t) => IMPLEMENTED_TYPES.includes(t));
+            if (availableTypes.length === 0) return null;
+
+            return (
+              <div key={cat.category}>
+                {availableTypes.map((chartType) => {
+                  if (recommendedTypes.some((r) => r.type === chartType)) return null;
+                  return renderOption(chartType);
+                })}
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );

@@ -5,8 +5,10 @@
 
 import { useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSurveyStore } from '../stores/useSurveyStore';
 import { useChartTheme } from '../hooks/useChartTheme';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 import { EmptyState, Button } from '../components';
 import { SortSelector } from '../components/SortSelector';
 import { ChartFilter } from '../components/ChartFilter';
@@ -30,6 +32,7 @@ export function SurveyDashboard() {
   const navigate = useNavigate();
   const { surveyData, sortOrder, filters, customTitles, insights, executiveSummary, isGeneratingInsights, chartTypeSelections, setChartType } = useSurveyStore();
   const { theme, colorPalette, styles } = useChartTheme();
+  const prefersReducedMotion = useReducedMotion();
   // Note: Storytelling state is now handled internally by ChartRenderer
   const { exportDashboardToPDF } = usePDFExport();
 
@@ -116,9 +119,9 @@ export function SurveyDashboard() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: theme.colors.background }}>
+    <main className="min-h-screen" style={{ backgroundColor: theme.colors.background }} aria-label="Survey Dashboard">
       {/* Sticky Header */}
-      <div
+      <header
         className="sticky top-0 z-30"
         style={{
           backgroundColor: theme.colors.cardBackground,
@@ -156,7 +159,8 @@ export function SurveyDashboard() {
             <ThemeEditorButton />
             <button
               onClick={() => exportDashboardToPDF(`${formattedFileName}-dashboard.pdf`)}
-              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 transition-colors hover:opacity-80"
+              aria-label="Export dashboard as PDF"
+              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1"
               style={{
                 fontFamily: styles.fontFamily,
                 fontSize: styles.labelFontSize,
@@ -171,7 +175,7 @@ export function SurveyDashboard() {
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="px-6 py-8">
 
@@ -194,8 +198,10 @@ export function SurveyDashboard() {
             {analyses.map((analysis, idx) => {
               const chartId = `chart-${analysis.columnName}-${idx}`;
               return (
-            <div
-              key={idx}
+            <motion.div
+              key={analysis.columnName}
+              role="region"
+              aria-label={`Chart: ${analysis.title}, ${analysis.n} responses`}
               className="border p-6"
               style={{
                 backgroundColor: theme.colors.cardBackground,
@@ -204,6 +210,13 @@ export function SurveyDashboard() {
                 boxShadow: styles.containerShadow,
               }}
               data-chart-id={chartId}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={prefersReducedMotion ? { duration: 0 } : {
+                duration: 0.3,
+                delay: idx * 0.05,
+                ease: 'easeOut',
+              }}
             >
 
               {/* Question Title & Actions */}
@@ -252,7 +265,15 @@ export function SurveyDashboard() {
               </div>
 
               {/* Dynamic Chart Renderer - storytelling handled internally */}
-              <div className="mb-8">
+              <AnimatePresence mode="wait">
+              <motion.div
+                key={chartTypeSelections.get(analysis.columnName) || 'default'}
+                className="mb-8"
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
                 <ChartRenderer
                   type={chartTypeSelections.get(analysis.columnName) ||
                     (analysis.recommendations?.find(r => r.isDefault)?.type || 'horizontal-bar')}
@@ -264,7 +285,8 @@ export function SurveyDashboard() {
                   styles={styles}
                   height={300}
                 />
-              </div>
+              </motion.div>
+              </AnimatePresence>
 
               {/* Data Table */}
               <div
@@ -286,7 +308,7 @@ export function SurveyDashboard() {
                   Data
                 </h3>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full" style={{ fontFamily: styles.fontFamily }}>
+                  <table className="min-w-full" style={{ fontFamily: styles.fontFamily }} aria-label={`Data table for ${analysis.title}`}>
                     <thead>
                       <tr style={{ borderBottom: `1px solid ${theme.colors.textMuted}30` }}>
                         <th
@@ -366,7 +388,7 @@ export function SurveyDashboard() {
                 </div>
               </div>
 
-            </div>
+            </motion.div>
               );
             })}
           </div>
@@ -376,7 +398,7 @@ export function SurveyDashboard() {
         <div className="mt-12 flex justify-center gap-3">
           <button
             onClick={() => navigate('/')}
-            className="px-5 py-2.5 border rounded-lg transition-colors hover:opacity-80"
+            className="px-5 py-2.5 border rounded-lg transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1"
             style={{
               fontFamily: styles.fontFamily,
               fontSize: styles.labelFontSize,
@@ -390,7 +412,7 @@ export function SurveyDashboard() {
           </button>
           <button
             onClick={() => navigate('/insights')}
-            className="px-5 py-2.5 border rounded-lg transition-colors hover:opacity-80"
+            className="px-5 py-2.5 border rounded-lg transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1"
             style={{
               fontFamily: styles.fontFamily,
               fontSize: styles.labelFontSize,
@@ -404,7 +426,7 @@ export function SurveyDashboard() {
           </button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

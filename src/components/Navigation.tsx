@@ -11,7 +11,7 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="border-b border-gray-200 bg-white">
+    <nav className="border-b border-gray-200 bg-white" aria-label="Main navigation">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">

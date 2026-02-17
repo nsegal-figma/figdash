@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useChartTheme } from '../hooks/useChartTheme';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 
 export interface CardProps {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export function Card({
   onClick,
 }: CardProps) {
   const { theme, styles } = useChartTheme();
+  const prefersReducedMotion = useReducedMotion();
 
   const paddingStyles = {
     none: '',
@@ -40,18 +42,12 @@ export function Card({
         transition: styles.animationTransition,
       }}
       onClick={onClick}
-      whileHover={hover ? { opacity: theme.effects.hoverOpacity } : undefined}
-      initial={{ opacity: 0, y: 4 }}
+      whileHover={hover && !prefersReducedMotion ? { opacity: theme.effects.hoverOpacity } : undefined}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: theme.effects.animationDuration / 1000 }}
+      transition={{ duration: prefersReducedMotion ? 0 : theme.effects.animationDuration / 1000 }}
     >
       {children}
     </motion.div>
   );
 }
-
-
-
-
-
-

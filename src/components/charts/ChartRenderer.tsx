@@ -4,7 +4,7 @@
  * Includes storytelling support for all chart types
  */
 
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 import type { ChartType } from '../../types/chartTypes';
 import type { ChartTheme } from '../../types/chartTheme';
 import { useStorytelling, useChartStorytelling } from '../../hooks/useStorytelling';
@@ -53,7 +53,7 @@ export interface ChartRendererProps {
 
 // ============ Main Renderer ============
 
-export function ChartRenderer({
+export const ChartRenderer = memo(function ChartRenderer({
   type,
   data,
   totalN,
@@ -177,4 +177,4 @@ export function ChartRenderer({
         />
       );
   }
-}
+});

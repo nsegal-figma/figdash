@@ -58,9 +58,9 @@ export function Button({
         };
       case 'danger':
         return {
-          backgroundColor: '#dc2626',
-          color: '#ffffff',
-          borderColor: '#dc2626',
+          backgroundColor: 'rgb(220, 38, 38)', // red-600
+          color: 'rgb(255, 255, 255)',
+          borderColor: 'rgb(220, 38, 38)', // red-600
         };
       default:
         return {};

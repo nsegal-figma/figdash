@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 
 export interface StatProps {
   label: string;
@@ -14,12 +15,14 @@ export interface StatProps {
 }
 
 export function Stat({ label, value, icon, trend, className = '' }: StatProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <motion.div
       className={`bg-white rounded-lg shadow-md p-6 ${className}`}
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
@@ -45,9 +48,3 @@ export function Stat({ label, value, icon, trend, className = '' }: StatProps) {
     </motion.div>
   );
 }
-
-
-
-
-
-

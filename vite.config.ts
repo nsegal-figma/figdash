@@ -10,4 +10,23 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Core React runtime
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // Charting library
+          'recharts': ['recharts'],
+          // Animation library
+          'framer-motion': ['framer-motion'],
+          // Analytics & data processing
+          'analytics': [
+            'papaparse',
+            'sentiment',
+          ],
+        },
+      },
+    },
+  },
 })
