@@ -12,6 +12,11 @@ import { HorizontalBarChart } from './HorizontalBarChart';
 import { VerticalBarChart } from './VerticalBarChart';
 import { ThemedPieChart, DonutChart } from './ThemedPieChart';
 import { LollipopChart } from './LollipopChart';
+import { StackedBarChart } from './StackedBarChart';
+import { HistogramChart } from './HistogramChart';
+import { WaffleChart } from './WaffleChart';
+import { TreemapChart } from './TreemapChart';
+import { DivergingBarChart } from './DivergingBarChart';
 
 // ============ Types ============
 
@@ -157,11 +162,78 @@ export const ChartRenderer = memo(function ChartRenderer({
         />
       );
 
-    // For chart types not yet implemented, fall back to horizontal bar
-    case 'histogram':
-    case 'grouped-bar':
     case 'stacked-bar':
+      return (
+        <StackedBarChart
+          data={data}
+          totalN={totalN}
+          colors={colors}
+          theme={theme}
+          styles={styles}
+          height={height}
+          columnName={columnName}
+          storytelling={storytellingProps}
+        />
+      );
+
+    case 'histogram':
+      return (
+        <HistogramChart
+          data={data}
+          totalN={totalN}
+          colors={colors}
+          theme={theme}
+          styles={styles}
+          height={height}
+          columnName={columnName}
+          storytelling={storytellingProps}
+        />
+      );
+
+    case 'waffle':
+      return (
+        <WaffleChart
+          data={data}
+          totalN={totalN}
+          colors={colors}
+          theme={theme}
+          styles={styles}
+          height={height}
+          columnName={columnName}
+          storytelling={storytellingProps}
+        />
+      );
+
+    case 'treemap':
+      return (
+        <TreemapChart
+          data={data}
+          totalN={totalN}
+          colors={colors}
+          theme={theme}
+          styles={styles}
+          height={height}
+          columnName={columnName}
+          storytelling={storytellingProps}
+        />
+      );
+
     case 'diverging-bar':
+      return (
+        <DivergingBarChart
+          data={data}
+          totalN={totalN}
+          colors={colors}
+          theme={theme}
+          styles={styles}
+          height={height}
+          columnName={columnName}
+          storytelling={storytellingProps}
+        />
+      );
+
+    // Grouped bar and unknown types fall back to horizontal bar
+    case 'grouped-bar':
     default:
       return (
         <HorizontalBarChart

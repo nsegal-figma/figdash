@@ -13,6 +13,8 @@ import {
   GitCommitHorizontal,
   ChevronDown,
   Target,
+  Grid3x3,
+  LayoutGrid,
 } from 'lucide-react';
 import { useChartTheme } from '../hooks/useChartTheme';
 import type { ChartType, ChartRecommendation } from '../types/chartTypes';
@@ -46,6 +48,8 @@ const CHART_ICONS: Record<string, React.ElementType> = {
   Layers: BarChart3,
   ArrowLeftRight: BarChart3,
   BarChart4: BarChart3,
+  Grid3x3: Grid3x3,
+  LayoutGrid: LayoutGrid,
 };
 
 function getChartIcon(iconName: string): React.ElementType {
@@ -54,7 +58,10 @@ function getChartIcon(iconName: string): React.ElementType {
 
 // ============ Constants ============
 
-const IMPLEMENTED_TYPES: ChartType[] = ['horizontal-bar', 'vertical-bar', 'pie', 'donut', 'lollipop'];
+const IMPLEMENTED_TYPES: ChartType[] = [
+  'horizontal-bar', 'vertical-bar', 'pie', 'donut', 'lollipop',
+  'stacked-bar', 'histogram', 'waffle', 'treemap', 'diverging-bar',
+];
 
 // ============ Main Component ============
 
@@ -175,7 +182,10 @@ export function ChartTypeSelector({
   const categories = [
     { category: 'bar', label: CHART_CATEGORY_LABELS['bar'], types: getChartTypesByCategory('bar') },
     { category: 'part-to-whole', label: CHART_CATEGORY_LABELS['part-to-whole'], types: getChartTypesByCategory('part-to-whole') },
+    { category: 'proportional', label: CHART_CATEGORY_LABELS['proportional'], types: getChartTypesByCategory('proportional') },
     { category: 'ranking', label: CHART_CATEGORY_LABELS['ranking'], types: getChartTypesByCategory('ranking') },
+    { category: 'distribution', label: CHART_CATEGORY_LABELS['distribution'], types: getChartTypesByCategory('distribution') },
+    { category: 'comparison', label: CHART_CATEGORY_LABELS['comparison'], types: getChartTypesByCategory('comparison') },
   ];
 
   const renderOption = (type: ChartType, rec?: ChartRecommendation) => {

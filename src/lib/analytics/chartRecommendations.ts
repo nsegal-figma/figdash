@@ -219,7 +219,62 @@ export function recommendChartTypes(
     });
   }
 
-  // Rule 6: Always include horizontal bar as fallback
+  // Rule 6: Diverging bar for ordinal/Likert scales (3-7 categories)
+  if (isOrdinal && cardinality >= 3 && cardinality <= 7) {
+    recommendations.push({
+      type: 'diverging-bar',
+      category: 'comparison',
+      confidence: 0.85,
+      reason: 'Best for Likert/sentiment scales — shows positive vs negative',
+      isDefault: false,
+    });
+  }
+
+  // Rule 7: Histogram for scale/rating data (3-10 categories)
+  if (isScale && cardinality >= 3 && cardinality <= 10) {
+    recommendations.push({
+      type: 'histogram',
+      category: 'distribution',
+      confidence: 0.80,
+      reason: 'Shows rating distribution clearly',
+      isDefault: false,
+    });
+  }
+
+  // Rule 8: Waffle for balanced small cardinality (2-5)
+  if (cardinality >= 2 && cardinality <= 5 && !hasDominantValue) {
+    recommendations.push({
+      type: 'waffle',
+      category: 'proportional',
+      confidence: 0.70,
+      reason: `Intuitive "out of 100" view for ${cardinality} categories`,
+      isDefault: false,
+    });
+  }
+
+  // Rule 9: Treemap for high cardinality (8-20)
+  if (cardinality >= 8 && cardinality <= 20) {
+    recommendations.push({
+      type: 'treemap',
+      category: 'part-to-whole',
+      confidence: 0.75,
+      reason: `Handles ${cardinality} categories better than pie`,
+      isDefault: false,
+    });
+  }
+
+  // Rule 10: Stacked bar for small-to-medium cardinality (2-6)
+  if (cardinality >= 2 && cardinality <= 6) {
+    recommendations.push({
+      type: 'stacked-bar',
+      category: 'part-to-whole',
+      confidence: 0.65,
+      reason: 'At-a-glance proportion view',
+      isDefault: false,
+    });
+  }
+
+  // Always include horizontal bar as fallback
   if (!recommendations.some((r) => r.type === 'horizontal-bar')) {
     recommendations.push({
       type: 'horizontal-bar',

@@ -10,7 +10,8 @@ export type ChartCategory =
   | 'part-to-whole'
   | 'ranking'
   | 'distribution'
-  | 'comparison';
+  | 'comparison'
+  | 'proportional';
 
 // ============ Chart Types ============
 
@@ -23,7 +24,9 @@ export type ChartType =
   | 'histogram'
   | 'grouped-bar'
   | 'stacked-bar'
-  | 'diverging-bar';
+  | 'diverging-bar'
+  | 'waffle'
+  | 'treemap';
 
 // ============ Data Characteristics ============
 
@@ -149,9 +152,10 @@ export const CHART_TYPE_CONFIGS: Record<ChartType, ChartTypeConfig> = {
     type: 'histogram',
     category: 'distribution',
     label: 'Histogram',
-    description: 'Shows distribution of continuous numeric data',
+    description: 'Shows distribution of scale/rating data',
     icon: 'BarChart',
-    requiresNumeric: true,
+    minCategories: 3,
+    maxCategories: 10,
     supportsTheme: true,
     supportsAnnotations: false,
   },
@@ -166,10 +170,12 @@ export const CHART_TYPE_CONFIGS: Record<ChartType, ChartTypeConfig> = {
   },
   'stacked-bar': {
     type: 'stacked-bar',
-    category: 'comparison',
+    category: 'part-to-whole',
     label: 'Stacked Bar',
-    description: 'Show composition within groups',
+    description: 'Single bar showing proportional segments',
     icon: 'Layers',
+    minCategories: 2,
+    maxCategories: 8,
     supportsTheme: true,
     supportsAnnotations: false,
   },
@@ -179,6 +185,30 @@ export const CHART_TYPE_CONFIGS: Record<ChartType, ChartTypeConfig> = {
     label: 'Diverging Bar',
     description: 'Best for Likert scales and sentiment data',
     icon: 'ArrowLeftRight',
+    minCategories: 3,
+    maxCategories: 7,
+    supportsTheme: true,
+    supportsAnnotations: false,
+  },
+  'waffle': {
+    type: 'waffle',
+    category: 'proportional',
+    label: 'Waffle',
+    description: 'Intuitive grid showing proportions out of 100',
+    icon: 'Grid3x3',
+    minCategories: 2,
+    maxCategories: 6,
+    supportsTheme: true,
+    supportsAnnotations: false,
+  },
+  'treemap': {
+    type: 'treemap',
+    category: 'part-to-whole',
+    label: 'Treemap',
+    description: 'Nested rectangles sized by value, great for many categories',
+    icon: 'LayoutGrid',
+    minCategories: 3,
+    maxCategories: 20,
     supportsTheme: true,
     supportsAnnotations: false,
   },
@@ -192,6 +222,7 @@ export const CHART_CATEGORY_LABELS: Record<ChartCategory, string> = {
   'ranking': 'Ranking',
   'distribution': 'Distribution',
   'comparison': 'Comparison',
+  'proportional': 'Proportional',
 };
 
 // ============ Helper Functions ============
