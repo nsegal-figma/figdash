@@ -167,7 +167,7 @@ export function Insights() {
                     {/* Insights */}
                     {item.aiSummary.insights.length > 0 && (
                       <div className="mt-3 rounded-md bg-gray-50 p-3">
-                        <p className="mb-2 text-xs font-medium text-gray-700">Key Insights:</p>
+                        <p className="mb-2 text-xs font-medium text-gray-700">Insights:</p>
                         <ul className="space-y-1 text-sm text-gray-700">
                           {item.aiSummary.insights.map((insight, idx) => (
                             <li key={idx} className="flex items-start gap-2">

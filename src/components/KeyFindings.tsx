@@ -64,7 +64,7 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
               color: theme.colors.textPrimary,
             }}
           >
-            Key Findings
+            Summary
           </h2>
           {isLoading && (
             <span
@@ -96,25 +96,14 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
             transition={{ duration: prefersReducedMotion ? 0 : 0.25, ease: 'easeOut' }}
             style={{ overflow: 'hidden' }}
           >
-            {/* Executive Summary */}
+            {/* Overview */}
           {executiveSummary && (
             <div
               className="mb-6 rounded-md p-4"
               style={{ backgroundColor: `${theme.colors.borderColor}40` }}
             >
-              <h3
-              style={{
-                fontFamily: styles.fontFamily,
-                fontSize: styles.labelFontSize,
-                fontWeight: 500,
-                marginBottom: '0.75rem',
-                color: theme.colors.textPrimary,
-              }}
-            >
-                Executive Summary
-              </h3>
               <p
-                className="mb-4 leading-relaxed"
+                className="leading-relaxed"
                 style={{
                   fontFamily: styles.fontFamily,
                   fontSize: styles.labelFontSize,
@@ -123,109 +112,14 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
               >
                 {executiveSummary.overview}
               </p>
-
-              {executiveSummary.keyTakeaways.length > 0 && (
-                <div className="mb-4">
-                  <h4
-                    className="mb-2"
-                    style={{
-                      fontFamily: styles.fontFamily,
-                      fontSize: styles.axisTickFontSize,
-                      fontWeight: 500,
-                      color: theme.colors.textSecondary,
-                    }}
-                  >
-                    Key Takeaways:
-                  </h4>
-                  <ul className="space-y-1.5">
-                    {executiveSummary.keyTakeaways.map((takeaway, idx) => (
-                      <li
-                        key={idx}
-                        className="flex items-start gap-2"
-                        style={{
-                          fontFamily: styles.fontFamily,
-                          fontSize: styles.labelFontSize,
-                          color: theme.colors.textSecondary,
-                        }}
-                      >
-                        <span className="mt-1" style={{ color: theme.colors.textMuted }}>•</span>
-                        <span>{takeaway}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {executiveSummary.surprisingFindings.length > 0 && (
-                <div className="mb-4">
-                  <h4
-                    className="mb-2"
-                    style={{
-                      fontFamily: styles.fontFamily,
-                      fontSize: styles.axisTickFontSize,
-                      fontWeight: 500,
-                      color: theme.colors.textSecondary,
-                    }}
-                  >
-                    Surprising Findings:
-                  </h4>
-                  <ul className="space-y-1.5">
-                    {executiveSummary.surprisingFindings.map((finding, idx) => (
-                      <li
-                        key={idx}
-                        className="flex items-start gap-2"
-                        style={{
-                          fontFamily: styles.fontFamily,
-                          fontSize: styles.labelFontSize,
-                          color: theme.colors.textSecondary,
-                        }}
-                      >
-                        <Lightbulb className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-yellow-600" />
-                        <span>{finding}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {executiveSummary.recommendations.length > 0 && (
-                <div>
-                  <h4
-                    className="mb-2"
-                    style={{
-                      fontFamily: styles.fontFamily,
-                      fontSize: styles.axisTickFontSize,
-                      fontWeight: 500,
-                      color: theme.colors.textSecondary,
-                    }}
-                  >
-                    Recommendations:
-                  </h4>
-                  <ul className="space-y-1.5">
-                    {executiveSummary.recommendations.map((rec, idx) => (
-                      <li
-                        key={idx}
-                        className="flex items-start gap-2"
-                        style={{
-                          fontFamily: styles.fontFamily,
-                          fontSize: styles.labelFontSize,
-                          color: theme.colors.textSecondary,
-                        }}
-                      >
-                        <span className="mt-1" style={{ color: theme.colors.textMuted }}>→</span>
-                        <span>{rec}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
           )}
 
-          {/* Statistical Insights */}
-          {insights.length > 0 && (
-            <div className="space-y-3">
+          {/* Insights — merged AI bullets + statistical cards */}
+          {(executiveSummary?.keyTakeaways?.length || executiveSummary?.surprisingFindings?.length || insights.length > 0) && (
+            <div className="mb-6">
               <h3
+                className="mb-3"
                 style={{
                   fontFamily: styles.fontFamily,
                   fontSize: styles.labelFontSize,
@@ -233,8 +127,46 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
                   color: theme.colors.textSecondary,
                 }}
               >
-                Key Insights:
+                Insights
               </h3>
+
+              {/* AI-generated bullets */}
+              {(executiveSummary?.keyTakeaways?.length || executiveSummary?.surprisingFindings?.length) ? (
+                <ul className="mb-4 space-y-1.5">
+                  {executiveSummary!.keyTakeaways.map((takeaway, idx) => (
+                    <li
+                      key={`takeaway-${idx}`}
+                      className="flex items-start gap-2"
+                      style={{
+                        fontFamily: styles.fontFamily,
+                        fontSize: styles.labelFontSize,
+                        color: theme.colors.textSecondary,
+                      }}
+                    >
+                      <span className="mt-1" style={{ color: theme.colors.textMuted }}>•</span>
+                      <span>{takeaway}</span>
+                    </li>
+                  ))}
+                  {executiveSummary!.surprisingFindings.map((finding, idx) => (
+                    <li
+                      key={`surprising-${idx}`}
+                      className="flex items-start gap-2"
+                      style={{
+                        fontFamily: styles.fontFamily,
+                        fontSize: styles.labelFontSize,
+                        color: theme.colors.textSecondary,
+                      }}
+                    >
+                      <Lightbulb className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-yellow-600" />
+                      <span>{finding}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+
+              {/* Statistical insight cards */}
+              {insights.length > 0 && (
+                <div className="space-y-3">
               {insights.map((insight, index) => {
                 const badge = getConfidenceBadge(insight.confidence);
                 return (
@@ -288,6 +220,41 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
                   </motion.div>
                 );
               })}
+            </div>
+          )}
+            </div>
+          )}
+
+          {/* Recommendations */}
+          {executiveSummary && executiveSummary.recommendations.length > 0 && (
+            <div>
+              <h3
+                className="mb-3"
+                style={{
+                  fontFamily: styles.fontFamily,
+                  fontSize: styles.labelFontSize,
+                  fontWeight: 500,
+                  color: theme.colors.textSecondary,
+                }}
+              >
+                Recommendations
+              </h3>
+              <ul className="space-y-1.5">
+                {executiveSummary.recommendations.map((rec, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-start gap-2"
+                    style={{
+                      fontFamily: styles.fontFamily,
+                      fontSize: styles.labelFontSize,
+                      color: theme.colors.textSecondary,
+                    }}
+                  >
+                    <span className="mt-1" style={{ color: theme.colors.textMuted }}>→</span>
+                    <span>{rec}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
           </motion.div>
