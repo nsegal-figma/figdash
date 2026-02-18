@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Scan, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
+import { Scan, ChevronDown, ChevronUp } from 'lucide-react';
 import type { Insight } from '../lib/ai/insightDiscovery';
 import type { ExecutiveSummary } from '../lib/ai/executiveSummary';
 import { Card } from './Card';
@@ -111,29 +111,63 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
                 >
                   Insights
                 </h3>
-                <ul className="space-y-1.5">
-                  {/* AI-generated takeaways */}
-                  {executiveSummary?.keyTakeaways?.map((takeaway, idx) => (
-                    <li key={`takeaway-${idx}`} className="flex items-start gap-2" style={bulletStyle}>
-                      <span className="mt-1" style={{ color: theme.colors.textMuted }}>•</span>
-                      <span>{takeaway}</span>
-                    </li>
-                  ))}
-                  {/* AI-generated surprising findings — lightbulb distinguishes them */}
-                  {executiveSummary?.surprisingFindings?.map((finding, idx) => (
-                    <li key={`surprising-${idx}`} className="flex items-start gap-2" style={bulletStyle}>
-                      <Lightbulb className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-yellow-600" />
-                      <span>{finding}</span>
-                    </li>
-                  ))}
-                  {/* Statistical insights — rendered as plain bullets */}
-                  {insights.map((insight) => (
-                    <li key={insight.id} className="flex items-start gap-2" style={bulletStyle}>
-                      <span className="mt-1" style={{ color: theme.colors.textMuted }}>•</span>
-                      <span>{insight.title}</span>
-                    </li>
-                  ))}
-                </ul>
+                {/* AI-generated bullets */}
+                {hasAiBullets && (
+                  <ul className="mb-4 space-y-1.5">
+                    {executiveSummary?.keyTakeaways?.map((takeaway, idx) => (
+                      <li key={`takeaway-${idx}`} className="flex items-start gap-2" style={bulletStyle}>
+                        <span className="mt-1" style={{ color: theme.colors.textMuted }}>•</span>
+                        <span>{takeaway}</span>
+                      </li>
+                    ))}
+                    {executiveSummary?.surprisingFindings?.map((finding, idx) => (
+                      <li key={`surprising-${idx}`} className="flex items-start gap-2" style={bulletStyle}>
+                        <span className="mt-1" style={{ color: theme.colors.textMuted }}>•</span>
+                        <span>{finding}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {/* Statistical insight cards */}
+                {insights.length > 0 && (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {insights.map((insight) => (
+                      <motion.div
+                        key={insight.id}
+                        className="rounded-lg border p-4"
+                        style={{
+                          borderColor: theme.colors.borderColor,
+                          backgroundColor: 'transparent',
+                        }}
+                        whileHover={{ y: -1 }}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.15 }}
+                      >
+                        <p
+                          style={{
+                            fontFamily: styles.fontFamily,
+                            fontSize: styles.labelFontSize,
+                            fontWeight: 600,
+                            color: theme.colors.textPrimary,
+                            marginBottom: '0.25rem',
+                          }}
+                        >
+                          {insight.title}
+                        </p>
+                        <p
+                          style={{
+                            fontFamily: styles.fontFamily,
+                            fontSize: styles.axisTickFontSize,
+                            color: theme.colors.textMuted,
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {insight.description}
+                        </p>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
