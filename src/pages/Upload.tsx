@@ -23,7 +23,7 @@ import {
 } from '../utils/csvParser';
 import type { SurveyData, Column } from '../types/survey';
 import { useSurveyStore } from '../stores/useSurveyStore';
-import { generateAISummaryWithOpenAI } from '../lib/ai/openai';
+import { generateAISummaryWithOpenAI, generateSmartLabels } from '../lib/ai/openai';
 import { discoverInsights } from '../lib/ai/insightDiscovery';
 import { generateExecutiveSummary } from '../lib/ai/executiveSummary';
 import { runAutoCleaning } from '../utils/autoCleaningEngine';
@@ -49,6 +49,7 @@ export function Upload() {
     cleaningReport,
     surveyType,
     setSurveyType,
+    setSmartLabels,
   } = useSurveyStore();
 
   const [previewData, setPreviewData] = useState<{
@@ -315,6 +316,31 @@ export function Upload() {
     setIsGeneratingAI(false);
   };
 
+  const generateSmartLabelsInBackground = async (surveyData: SurveyData) => {
+    // For each categorical column, generate AI-shortened labels for long values
+    const categoricalCols = surveyData.columns.filter(
+      (c) => c.type === 'categorical'
+    );
+
+    for (const col of categoricalCols) {
+      const uniqueValues = [
+        ...new Set(
+          surveyData.rows
+            .map((r) => String(r[col.name] || ''))
+            .filter((v) => v.trim())
+        ),
+      ];
+
+      // Only call AI if there are values longer than 25 chars
+      if (uniqueValues.some((v) => v.length > 25)) {
+        const labels = await generateSmartLabels(col.name, uniqueValues);
+        if (labels.size > 0) {
+          setSmartLabels(labels);
+        }
+      }
+    }
+  };
+
   const generateInsightsInBackground = async (surveyData: SurveyData) => {
     setIsGeneratingInsights(true);
 
@@ -326,6 +352,9 @@ export function Upload() {
       // Step 2: Generate AI executive summary based on insights
       const summary = await generateExecutiveSummary(surveyData, discoveredInsights);
       setExecutiveSummary(summary);
+
+      // Step 3: Generate smart labels for pie/donut charts (fire and forget)
+      generateSmartLabelsInBackground(surveyData);
     } catch (error) {
       console.error('Failed to generate insights:', error);
     } finally {

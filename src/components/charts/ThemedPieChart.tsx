@@ -14,6 +14,7 @@ import {
 import { Compass, X } from 'lucide-react';
 import type { ChartTheme } from '../../types/chartTheme';
 import type { StorytellingProps } from './ChartRenderer';
+import { useSurveyStore } from '../../stores/useSurveyStore';
 
 // ============ Types ============
 
@@ -61,6 +62,7 @@ interface CustomLabelProps {
   name: string;
   theme: ChartTheme;
   styles: ReturnType<typeof import('../../lib/themes').computeThemeStyles>;
+  smartLabels?: Map<string, string>;
 }
 
 function CustomLabel({
@@ -72,6 +74,7 @@ function CustomLabel({
   name,
   theme,
   styles,
+  smartLabels,
 }: CustomLabelProps) {
   const RADIAN = Math.PI / 180;
   const radius = outerRadius * 1.2;
@@ -86,9 +89,10 @@ function CustomLabel({
   // Small offset (2px) to prevent text touching the line endpoint
   const xOffset = x > cx ? 2 : -2;
 
-  // Truncate long names to prevent overflow
+  // Use AI-generated short label if available, otherwise truncate
+  const smartName = smartLabels?.get(name);
   const maxLen = 30;
-  const displayName = name.length > maxLen ? name.substring(0, maxLen - 1) + '…' : name;
+  const displayName = smartName || (name.length > maxLen ? name.substring(0, maxLen - 1) + '…' : name);
   const labelText = `${displayName}: ${percentValue}%`;
 
   return (
@@ -175,6 +179,8 @@ export function ThemedPieChart({
   outerRadius = 100,
   storytelling,
 }: ThemedPieChartProps) {
+  const { smartLabels } = useSurveyStore();
+
   // Calculate responsive radius based on container
   const responsiveOuterRadius = Math.min(outerRadius, height * 0.35);
   const responsiveInnerRadius = innerRadius > 0 ? responsiveOuterRadius * 0.6 : 0;
@@ -263,6 +269,7 @@ export function ThemedPieChart({
                         name={props.name as string}
                         theme={theme}
                         styles={styles}
+                        smartLabels={smartLabels}
                       />
                     )) as unknown as boolean
                   : undefined

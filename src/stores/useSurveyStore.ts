@@ -25,6 +25,9 @@ interface SurveyStore {
   isGeneratingInsights: boolean;
   surveyType: 'regular' | 'screener';
 
+  // Smart Labels (AI-shortened response labels for pie/donut charts)
+  smartLabels: Map<string, string>;
+
   // Chart Type Selections
   chartTypeSelections: Map<string, ChartType>;
 
@@ -52,6 +55,9 @@ interface SurveyStore {
   setExecutiveSummary: (summary: ExecutiveSummary) => void;
   setIsGeneratingInsights: (isGenerating: boolean) => void;
   setSurveyType: (type: 'regular' | 'screener') => void;
+
+  // Smart Labels Actions
+  setSmartLabels: (labels: Map<string, string>) => void;
 
   // Chart Type Actions
   setChartType: (columnName: string, type: ChartType) => void;
@@ -83,6 +89,9 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   executiveSummary: null,
   isGeneratingInsights: false,
   surveyType: 'regular',
+
+  // Smart Labels
+  smartLabels: new Map(),
 
   // Chart Type Selections
   chartTypeSelections: new Map(),
@@ -147,6 +156,14 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   setIsGeneratingInsights: (isGenerating) => set({ isGeneratingInsights: isGenerating }),
   setSurveyType: (type) => set({ surveyType: type }),
 
+  // Smart Labels Actions
+  setSmartLabels: (labels) =>
+    set((state) => {
+      const merged = new Map(state.smartLabels);
+      for (const [k, v] of labels) merged.set(k, v);
+      return { smartLabels: merged };
+    }),
+
   // Chart Type Actions
   setChartType: (columnName, type) =>
     set((state) => {
@@ -178,6 +195,7 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
       aiSummaries: new Map(),
       filters: new Map(),
       customTitles: new Map(),
+      smartLabels: new Map(),
       insights: [],
       executiveSummary: null,
       originalData: null,
