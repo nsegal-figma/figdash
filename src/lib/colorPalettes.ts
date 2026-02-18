@@ -76,7 +76,7 @@ export function generateColorsFromPalette(palette: ColorPalette, count: number):
 export function generateGradientColors(
   palette: ColorPalette,
   dataItems: Array<{ value: number }>,
-  _sortOrder: 'asc' | 'desc'
+  _sortOrder: string
 ): string[] {
   const colors = palette.colors;
 

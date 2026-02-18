@@ -52,8 +52,18 @@ export function SurveyDashboard() {
       surveyData.rows
     );
 
-    // Convert to format expected by UI, apply filters, and apply sorting
-    return visualizations
+    // Shannon entropy: measures how spread out responses are
+    const entropy = (data: { value: number }[]) => {
+      const total = data.reduce((s, d) => s + d.value, 0);
+      if (total === 0) return 0;
+      return -data.reduce((h, d) => {
+        const p = d.value / total;
+        return p > 0 ? h + p * Math.log2(p) : h;
+      }, 0);
+    };
+
+    // Convert to format expected by UI and apply filters
+    const mapped = visualizations
       .filter(v => v.visualization !== 'text_analysis') // Text goes to Insights page
       .map(v => {
         const columnName = v.columnName;
@@ -68,11 +78,6 @@ export function SurveyDashboard() {
           filteredN = filteredData.reduce((sum, item) => sum + item.value, 0);
         }
 
-        // Sort data based on sortOrder
-        const sortedData = [...filteredData].sort((a, b) => {
-          return sortOrder === 'desc' ? b.value - a.value : a.value - b.value;
-        });
-
         // Get all available values for the filter
         const availableValues = v.data.map(item => item.name);
 
@@ -85,11 +90,20 @@ export function SurveyDashboard() {
           columnName,
           n: filteredN,
           type: 'simple' as const,
-          data: sortedData,
+          data: filteredData,
           availableValues,
           recommendations: v.recommendations,
         };
       });
+
+    // Sort charts by entropy if requested
+    if (sortOrder === 'most-varied') {
+      mapped.sort((a, b) => entropy(b.data) - entropy(a.data));
+    } else if (sortOrder === 'most-consensus') {
+      mapped.sort((a, b) => entropy(a.data) - entropy(b.data));
+    }
+
+    return mapped;
   }, [surveyData, sortOrder, filters, customTitles]);
 
   const formattedFileName = useMemo(() =>

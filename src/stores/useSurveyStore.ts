@@ -7,7 +7,7 @@ import type { ExecutiveSummary } from '../lib/ai/executiveSummary';
 import type { CleaningReport, CleaningSettings, CleaningMode } from '../types/cleaning';
 import type { ChartType } from '../types/chartTypes';
 
-export type SortOrder = 'desc' | 'asc';
+export type SortOrder = 'original' | 'most-varied' | 'most-consensus';
 
 interface SurveyStore {
   surveyData: SurveyData | null;
@@ -79,7 +79,7 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   isLoading: false,
   error: null,
   selectedPalette: DEFAULT_PALETTE,
-  sortOrder: 'desc',
+  sortOrder: 'original',
   aiSummaries: new Map(),
   isGeneratingAI: false,
   filters: new Map(),
