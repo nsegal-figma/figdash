@@ -81,8 +81,8 @@ function CustomLabel({
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-  // Only show label if slice is > 3%
-  if (percent < 0.03) return null;
+  // Always label every slice — no hiding small slices
+  if (percent === 0) return null;
 
   const percentValue = (percent * 100).toFixed(theme.dataLabels.percentageDecimals);
 
@@ -245,7 +245,7 @@ export function ThemedPieChart({
               minAngle={3}
               dataKey="value"
               labelLine={showLabels ? ((props: Record<string, unknown>) => {
-                if ((props.percent as number) < 0.03) return <path d="" />;
+                if ((props.percent as number) === 0) return <path d="" />;
                 const pts = props.points as Array<{ x: number; y: number }>;
                 return (
                   <path
