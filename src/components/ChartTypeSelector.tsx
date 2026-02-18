@@ -264,7 +264,7 @@ export function ChartTypeSelector({
           if (!isOpen) setFocusIndex(0);
         }}
         onKeyDown={handleKeyDown}
-        className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1"
+        className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 py-1.5 transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1"
         style={{
           fontFamily: styles.fontFamily,
           fontSize: styles.axisTickFontSize,
@@ -293,7 +293,7 @@ export function ChartTypeSelector({
             aria-label="Select chart type"
             aria-activedescendant={focusIndex >= 0 ? `chart-option-${selectableItems[focusIndex]}` : undefined}
             onKeyDown={handleKeyDown}
-            className="absolute left-0 top-full z-20 mt-1 w-64 max-h-80 overflow-y-auto rounded-md border py-1 shadow-lg"
+            className="absolute right-0 top-full z-20 mt-1 w-80 max-h-80 overflow-y-auto rounded-md border py-1 shadow-lg"
             initial={{ opacity: 0, y: -4, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.95 }}

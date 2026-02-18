@@ -221,8 +221,8 @@ export function SurveyDashboard() {
             >
 
               {/* Question Title & Actions */}
-              <div className="mb-6 flex items-start justify-between">
-                <div>
+              <div className="mb-6 flex items-start justify-between gap-4">
+                <div className="min-w-0 flex-1">
                   <EditableChartTitle
                     columnName={analysis.columnName}
                     originalTitle={analysis.originalTitle}
@@ -238,7 +238,7 @@ export function SurveyDashboard() {
                     n={analysis.n}
                   </p>
                 </div>
-                <div className="flex items-center gap-2" data-export-exclude>
+                <div className="flex flex-shrink-0 items-center gap-2" data-export-exclude>
                   {/* Chart Type Selector */}
                   {analysis.recommendations && analysis.recommendations.length > 0 && (
                     <ChartTypeSelector
