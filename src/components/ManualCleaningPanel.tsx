@@ -10,7 +10,7 @@ import {
   ChevronDown,
   ChevronRight,
   Eye,
-  Sparkles,
+  BrainCircuit,
   BookOpen,
   ArrowRight,
   ArrowLeft,
@@ -153,7 +153,7 @@ export function ManualCleaningPanel({
               <Button
                 variant="secondary"
                 size="sm"
-                icon={isLoadingRecommendations ? <LoadingSpinner size="sm" /> : <Sparkles className="h-4 w-4" />}
+                icon={isLoadingRecommendations ? <LoadingSpinner size="sm" /> : <BrainCircuit className="h-4 w-4" />}
                 onClick={handleGetAIRecommendations}
                 disabled={isLoadingRecommendations}
               >
@@ -167,7 +167,7 @@ export function ManualCleaningPanel({
             <div className="rounded-lg border-2 border-gray-900 bg-gray-50 p-4 space-y-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-gray-900" />
+                  <BrainCircuit className="h-5 w-5 text-gray-900" />
                   <h3 className="text-sm font-medium text-gray-900">AI Recommendations</h3>
                 </div>
                 <Button size="sm" onClick={handleApplyAIRecommendations}>

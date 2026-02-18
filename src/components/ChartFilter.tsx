@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, X } from 'lucide-react';
 import { useSurveyStore } from '../stores/useSurveyStore';
 import { useChartTheme } from '../hooks/useChartTheme';
@@ -61,17 +62,22 @@ export function ChartFilter({ columnName, availableValues }: ChartFilterProps) {
         )}
       </button>
 
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setIsOpen(false)}
+            />
 
-          {/* Dropdown */}
-          <div
-            className="absolute right-0 top-full z-20 mt-1 w-64 rounded-md border p-3 shadow-lg"
+            {/* Dropdown */}
+            <motion.div
+              className="absolute right-0 top-full z-20 mt-1 w-64 rounded-md border p-3 shadow-lg"
+              initial={{ opacity: 0, y: -4, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -4, scale: 0.95 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
             style={{
               borderColor: theme.colors.borderColor,
               backgroundColor: theme.colors.cardBackground,
@@ -124,9 +130,10 @@ export function ChartFilter({ columnName, availableValues }: ChartFilterProps) {
                 );
               })}
             </div>
-          </div>
+          </motion.div>
         </>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }

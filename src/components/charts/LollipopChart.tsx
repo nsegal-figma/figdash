@@ -3,7 +3,7 @@
  * Theme-aware lollipop chart (horizontal with dots) with storytelling support
  */
 
-import { Sparkles, X } from 'lucide-react';
+import { Compass, X } from 'lucide-react';
 import type { ChartTheme } from '../../types/chartTheme';
 import type { StorytellingProps } from './ChartRenderer';
 
@@ -78,14 +78,14 @@ function LollipopItem({
             <div
               className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1"
               style={{
-                backgroundColor: '#f59e0b',
+                backgroundColor: '#1e293b',
                 color: '#fff',
                 fontFamily: styles.fontFamily,
                 fontSize: styles.axisTickFontSize,
                 fontWeight: 600,
               }}
             >
-              <Sparkles className="h-3 w-3" />
+              <Compass className="h-3 w-3" />
               <span>{annotationText}</span>
               {onAnnotationDismiss && (
                 <button

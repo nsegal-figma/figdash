@@ -82,7 +82,7 @@ export const DEFAULT_THEME: ChartTheme = {
   },
 
   effects: {
-    containerShadow: 'none',
+    containerShadow: 'sm',
     hoverOpacity: 0.9,
     hoverCursor: true,
     animationDuration: 150,

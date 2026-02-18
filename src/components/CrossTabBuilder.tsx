@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Plus, X, Sparkles, Lightbulb } from 'lucide-react';
+import { Plus, X, Scan, Lightbulb } from 'lucide-react';
 import { useSurveyStore } from '../stores/useSurveyStore';
 import { useChartTheme } from '../hooks/useChartTheme';
 import { useStorytelling, useCrossTabStorytelling } from '../hooks/useStorytelling';
@@ -232,7 +232,7 @@ export function CrossTabBuilder() {
         <Card padding="lg">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4" style={{ color: theme.colors.textSecondary }} />
+              <Scan className="h-4 w-4" style={{ color: theme.colors.textSecondary }} />
               <h3
                 style={{
                   fontFamily: styles.fontFamily,

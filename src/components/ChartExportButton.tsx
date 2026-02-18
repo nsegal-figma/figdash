@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Download } from 'lucide-react';
 import { useChartImageExport } from '../hooks/useChartImageExport';
 import { useChartTheme } from '../hooks/useChartTheme';
@@ -48,47 +49,29 @@ export function ChartExportButton({ chartId, chartTitle, chartData }: ChartExpor
         Export
       </button>
 
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setIsOpen(false)}
+            />
 
-          {/* Dropdown */}
-          <div
-            className="absolute right-0 top-full z-20 mt-1 w-48 rounded-md border py-1 shadow-lg"
-            style={{
-              borderColor: theme.colors.borderColor,
-              backgroundColor: theme.colors.cardBackground,
-            }}
-          >
-            <button
-              onClick={() => handleExportPNG(false)}
-              className="w-full px-3 py-2 text-left hover:opacity-80"
+            {/* Dropdown */}
+            <motion.div
+              className="absolute right-0 top-full z-20 mt-1 w-48 rounded-md border py-1 shadow-lg"
+              initial={{ opacity: 0, y: -4, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -4, scale: 0.95 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
               style={{
-                fontFamily: styles.fontFamily,
-                fontSize: styles.axisTickFontSize,
-                color: theme.colors.textSecondary,
+                borderColor: theme.colors.borderColor,
+                backgroundColor: theme.colors.cardBackground,
               }}
             >
-              PNG (Chart only)
-            </button>
-            <button
-              onClick={() => handleExportPNG(true)}
-              className="w-full px-3 py-2 text-left hover:opacity-80"
-              style={{
-                fontFamily: styles.fontFamily,
-                fontSize: styles.axisTickFontSize,
-                color: theme.colors.textSecondary,
-              }}
-            >
-              PNG (Chart + Table)
-            </button>
-            {chartData && (
               <button
-                onClick={handleExportSVG}
+                onClick={() => handleExportPNG(false)}
                 className="w-full px-3 py-2 text-left hover:opacity-80"
                 style={{
                   fontFamily: styles.fontFamily,
@@ -96,12 +79,36 @@ export function ChartExportButton({ chartId, chartTitle, chartData }: ChartExpor
                   color: theme.colors.textSecondary,
                 }}
               >
-                SVG (Editable)
+                PNG (Chart only)
               </button>
-            )}
-          </div>
-        </>
-      )}
+              <button
+                onClick={() => handleExportPNG(true)}
+                className="w-full px-3 py-2 text-left hover:opacity-80"
+                style={{
+                  fontFamily: styles.fontFamily,
+                  fontSize: styles.axisTickFontSize,
+                  color: theme.colors.textSecondary,
+                }}
+              >
+                PNG (Chart + Table)
+              </button>
+              {chartData && (
+                <button
+                  onClick={handleExportSVG}
+                  className="w-full px-3 py-2 text-left hover:opacity-80"
+                  style={{
+                    fontFamily: styles.fontFamily,
+                    fontSize: styles.axisTickFontSize,
+                    color: theme.colors.textSecondary,
+                  }}
+                >
+                  SVG (Editable)
+                </button>
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

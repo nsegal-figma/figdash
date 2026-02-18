@@ -4,7 +4,7 @@
  */
 
 import { useEffect } from 'react';
-import { Sparkles, X } from 'lucide-react';
+import { Compass, X } from 'lucide-react';
 import { useChartStorytelling } from '../../hooks/useStorytelling';
 import type { ChartTheme } from '../../types/chartTheme';
 import type { Annotation, BarEmphasis } from '../../types/storytelling';
@@ -109,14 +109,14 @@ function HorizontalBar({
             <div
               className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1"
               style={{
-                backgroundColor: '#f59e0b',
+                backgroundColor: '#1e293b',
                 color: '#fff',
                 fontFamily: styles.fontFamily,
                 fontSize: styles.axisTickFontSize,
                 fontWeight: 600,
               }}
             >
-              <Sparkles className="h-3 w-3" />
+              <Compass className="h-3 w-3" />
               <span>{annotation.text}</span>
               {onAnnotationRemove && (
                 <button

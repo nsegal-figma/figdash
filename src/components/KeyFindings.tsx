@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Sparkles, BarChart3, TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Scan, BarChart3, TrendingUp, Users, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
 import type { Insight } from '../lib/ai/insightDiscovery';
 import type { ExecutiveSummary } from '../lib/ai/executiveSummary';
 import { Card } from './Card';
 import { useChartTheme } from '../hooks/useChartTheme';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 import { FONT_SIZE_MAP } from '../lib/themes';
 
 interface KeyFindingsProps {
@@ -15,6 +17,7 @@ interface KeyFindingsProps {
 export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindingsProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const { theme, styles } = useChartTheme();
+  const prefersReducedMotion = useReducedMotion();
 
   const getInsightIcon = (type: Insight['type']) => {
     switch (type) {
@@ -27,7 +30,16 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
       case 'surprise':
         return <Lightbulb className="h-4 w-4 text-yellow-600" />;
       default:
-        return <Sparkles className="h-4 w-4" style={{ color: theme.colors.textSecondary }} />;
+        return <Scan className="h-4 w-4" style={{ color: theme.colors.textSecondary }} />;
+    }
+  };
+
+  const getInsightBackground = (type: Insight['type']) => {
+    switch (type) {
+      case 'correlation': return 'rgba(59, 130, 246, 0.06)';
+      case 'segment': return 'rgba(147, 51, 234, 0.06)';
+      case 'surprise': return 'rgba(245, 158, 11, 0.06)';
+      default: return undefined;
     }
   };
 
@@ -43,7 +55,7 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
     <Card padding="lg" className="mb-8">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5" style={{ color: theme.colors.textPrimary }} />
+          <Scan className="h-5 w-5" style={{ color: theme.colors.textPrimary }} />
           <h2
             style={{
               fontFamily: styles.fontFamily,
@@ -75,9 +87,16 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
         </button>
       </div>
 
-      {isExpanded && (
-        <>
-          {/* Executive Summary */}
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.25, ease: 'easeOut' }}
+            style={{ overflow: 'hidden' }}
+          >
+            {/* Executive Summary */}
           {executiveSummary && (
             <div
               className="mb-6 rounded-md p-4"
@@ -216,15 +235,19 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
               >
                 Key Insights:
               </h3>
-              {insights.map((insight) => {
+              {insights.map((insight, index) => {
                 const badge = getConfidenceBadge(insight.confidence);
                 return (
-                  <div
+                  <motion.div
                     key={insight.id}
-                    className="flex items-start gap-3 rounded-md border p-3 transition-colors hover:opacity-90"
+                    initial={prefersReducedMotion ? false : { opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, delay: index * 0.05 }}
+                    whileHover={!prefersReducedMotion ? { y: -1 } : undefined}
+                    className="flex items-start gap-3 rounded-md border p-3"
                     style={{
                       borderColor: theme.colors.borderColor,
-                      backgroundColor: theme.colors.cardBackground,
+                      backgroundColor: getInsightBackground(insight.type) || theme.colors.cardBackground,
                     }}
                   >
                     <div className="mt-0.5">{getInsightIcon(insight.type)}</div>
@@ -262,13 +285,14 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
                         {insight.description}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
           )}
-        </>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 }

@@ -210,6 +210,7 @@ export function SurveyDashboard() {
                 boxShadow: styles.containerShadow,
               }}
               data-chart-id={chartId}
+              whileHover={!prefersReducedMotion ? { y: -2, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)' } : undefined}
               initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={prefersReducedMotion ? { duration: 0 } : {

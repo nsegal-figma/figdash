@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, type HTMLMotionProps } from 'framer-motion';
 import { useChartTheme } from '../hooks/useChartTheme';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 
 export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -24,6 +25,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const { theme } = useChartTheme();
+  const prefersReducedMotion = useReducedMotion();
 
   const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none';
 
@@ -92,9 +94,10 @@ export function Button({
 
   return (
     <motion.button
-      className={`${baseStyles} ${sizeStyles[size]} ${widthStyle} border hover:opacity-90 ${className}`}
+      className={`${baseStyles} ${sizeStyles[size]} ${widthStyle} border ${className}`}
       style={{ ...getVariantStyle(), ...style }}
       disabled={disabled || loading}
+      whileHover={!disabled && !loading && !prefersReducedMotion ? { scale: 1.02 } : undefined}
       whileTap={!disabled && !loading ? { scale: 0.98 } : undefined}
       transition={{ duration: 0.1 }}
       {...props}

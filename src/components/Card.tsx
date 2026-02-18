@@ -42,7 +42,7 @@ export function Card({
         transition: styles.animationTransition,
       }}
       onClick={onClick}
-      whileHover={hover && !prefersReducedMotion ? { opacity: theme.effects.hoverOpacity } : undefined}
+      whileHover={hover && !prefersReducedMotion ? { y: -2, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)' } : undefined}
       initial={prefersReducedMotion ? false : { opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: prefersReducedMotion ? 0 : theme.effects.animationDuration / 1000 }}

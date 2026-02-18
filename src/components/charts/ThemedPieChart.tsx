@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { Sparkles, X } from 'lucide-react';
+import { Compass, X } from 'lucide-react';
 import type { ChartTheme } from '../../types/chartTheme';
 import type { StorytellingProps } from './ChartRenderer';
 
@@ -200,14 +200,14 @@ export function ThemedPieChart({
               key={ann.id}
               className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1"
               style={{
-                backgroundColor: '#f59e0b',
+                backgroundColor: '#1e293b',
                 color: '#fff',
                 fontFamily: styles.fontFamily,
                 fontSize: styles.axisTickFontSize,
                 fontWeight: 600,
               }}
             >
-              <Sparkles className="h-3 w-3" />
+              <Compass className="h-3 w-3" />
               <span><strong>{ann.name}:</strong> {ann.text}</span>
               <button
                 onClick={() => storytelling?.removeAnnotation(ann.id)}

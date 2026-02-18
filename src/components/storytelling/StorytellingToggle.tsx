@@ -3,7 +3,7 @@
  * Toggle button for enabling/disabling storytelling mode
  */
 
-import { Sparkles } from 'lucide-react';
+import { Compass } from 'lucide-react';
 import { useStorytelling } from '../../hooks/useStorytelling';
 import { useChartTheme } from '../../hooks/useChartTheme';
 
@@ -25,7 +25,7 @@ export function StorytellingToggle() {
       }}
       title={isEnabled ? 'Disable insights mode' : 'Enable insights mode'}
     >
-      <Sparkles
+      <Compass
         className="h-4 w-4"
         style={{
           opacity: isEnabled ? 1 : 0.7,

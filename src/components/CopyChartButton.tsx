@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Copy, Check, ChevronDown } from 'lucide-react';
 import { useClipboardCopy } from '../hooks/useClipboardCopy';
 import { useChartTheme } from '../hooks/useChartTheme';
@@ -132,47 +133,53 @@ export function CopyChartButton({ chartId, chartData }: CopyChartButtonProps) {
         )}
       </button>
 
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setIsOpen(false)}
+            />
 
-          {/* Dropdown */}
-          <div
-            className="absolute right-0 top-full z-20 mt-1 w-40 rounded-md border py-1 shadow-lg"
-            style={{
-              borderColor: theme.colors.borderColor,
-              backgroundColor: theme.colors.cardBackground,
-            }}
-          >
-            <button
-              onClick={handleCopyPNG}
-              className="w-full px-3 py-2 text-left hover:opacity-80"
+            {/* Dropdown */}
+            <motion.div
+              className="absolute right-0 top-full z-20 mt-1 w-40 rounded-md border py-1 shadow-lg"
+              initial={{ opacity: 0, y: -4, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -4, scale: 0.95 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
               style={{
-                fontFamily: styles.fontFamily,
-                fontSize: styles.axisTickFontSize,
-                color: theme.colors.textSecondary,
+                borderColor: theme.colors.borderColor,
+                backgroundColor: theme.colors.cardBackground,
               }}
             >
-              Copy as PNG
-            </button>
-            <button
-              onClick={handleCopySVG}
-              className="w-full px-3 py-2 text-left hover:opacity-80"
-              style={{
-                fontFamily: styles.fontFamily,
-                fontSize: styles.axisTickFontSize,
-                color: theme.colors.textSecondary,
-              }}
-            >
-              Copy as SVG
-            </button>
-          </div>
-        </>
-      )}
+              <button
+                onClick={handleCopyPNG}
+                className="w-full px-3 py-2 text-left hover:opacity-80"
+                style={{
+                  fontFamily: styles.fontFamily,
+                  fontSize: styles.axisTickFontSize,
+                  color: theme.colors.textSecondary,
+                }}
+              >
+                Copy as PNG
+              </button>
+              <button
+                onClick={handleCopySVG}
+                className="w-full px-3 py-2 text-left hover:opacity-80"
+                style={{
+                  fontFamily: styles.fontFamily,
+                  fontSize: styles.axisTickFontSize,
+                  color: theme.colors.textSecondary,
+                }}
+              >
+                Copy as SVG
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

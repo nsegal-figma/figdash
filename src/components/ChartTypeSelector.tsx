@@ -4,6 +4,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   BarChart3,
   BarChart2,
@@ -11,7 +12,7 @@ import {
   Circle,
   GitCommitHorizontal,
   ChevronDown,
-  Sparkles,
+  Target,
 } from 'lucide-react';
 import { useChartTheme } from '../hooks/useChartTheme';
 import type { ChartType, ChartRecommendation } from '../types/chartTypes';
@@ -220,7 +221,7 @@ export function ChartTypeSelector({
           >
             {config.label}
             {rec?.isDefault && (
-              <Sparkles
+              <Target
                 className="h-3 w-3"
                 style={{ color: '#f59e0b' }}
                 aria-label="Default recommendation"
@@ -284,14 +285,19 @@ export function ChartTypeSelector({
       </button>
 
       {/* Dropdown */}
-      {isOpen && (
-        <div
-          ref={menuRef}
-          role="listbox"
-          aria-label="Select chart type"
-          aria-activedescendant={focusIndex >= 0 ? `chart-option-${selectableItems[focusIndex]}` : undefined}
-          onKeyDown={handleKeyDown}
-          className="absolute left-0 top-full z-20 mt-1 w-64 max-h-80 overflow-y-auto rounded-md border py-1 shadow-lg"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            ref={menuRef}
+            role="listbox"
+            aria-label="Select chart type"
+            aria-activedescendant={focusIndex >= 0 ? `chart-option-${selectableItems[focusIndex]}` : undefined}
+            onKeyDown={handleKeyDown}
+            className="absolute left-0 top-full z-20 mt-1 w-64 max-h-80 overflow-y-auto rounded-md border py-1 shadow-lg"
+            initial={{ opacity: 0, y: -4, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.95 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
           style={{
             borderColor: theme.colors.borderColor,
             backgroundColor: theme.colors.cardBackground,
@@ -340,8 +346,9 @@ export function ChartTypeSelector({
               </div>
             );
           })}
-        </div>
-      )}
+        </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
