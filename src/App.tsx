@@ -9,7 +9,7 @@ import { useReducedMotion } from './hooks/useReducedMotion';
 // Lazy-load pages for code splitting
 const Upload = lazy(() => import('./pages/Upload').then(m => ({ default: m.Upload })));
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
-const Insights = lazy(() => import('./pages/Insights').then(m => ({ default: m.Insights })));
+
 
 function PageFallback() {
   return (
@@ -49,7 +49,7 @@ function AnimatedRoutes() {
           <Routes location={location}>
             <Route path="/" element={<Upload />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/insights" element={<Insights />} />
+
           </Routes>
         </Suspense>
       </motion.div>

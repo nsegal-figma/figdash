@@ -23,7 +23,7 @@ import {
 } from '../utils/csvParser';
 import type { SurveyData, Column } from '../types/survey';
 import { useSurveyStore } from '../stores/useSurveyStore';
-import { generateAISummaryWithOpenAI, generateSmartLabels } from '../lib/ai/openai';
+import { generateSmartLabels } from '../lib/ai/openai';
 import { discoverInsights } from '../lib/ai/insightDiscovery';
 import { generateExecutiveSummary } from '../lib/ai/executiveSummary';
 import { runAutoCleaning } from '../utils/autoCleaningEngine';
@@ -36,8 +36,6 @@ export function Upload() {
   const {
     setSurveyData,
     setError,
-    setAISummary,
-    setIsGeneratingAI,
     setInsights,
     setExecutiveSummary,
     setIsGeneratingInsights,
@@ -189,8 +187,7 @@ export function Upload() {
       markStepComplete('quality');
       setCurrentStep('review');
 
-      // Pre-generate AI summaries and insights
-      generateAISummariesInBackground(result.cleanedData);
+      // Pre-generate insights
       generateInsightsInBackground(result.cleanedData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Advanced cleaning failed');
@@ -247,8 +244,7 @@ export function Upload() {
     markStepComplete('quality');
     setCurrentStep('review');
 
-    // Pre-generate AI summaries and insights
-    generateAISummariesInBackground(processedSurveyData);
+    // Pre-generate insights
     generateInsightsInBackground(processedSurveyData);
   };
 
@@ -277,43 +273,13 @@ export function Upload() {
         rows: surveyData.rows.slice(0, 10),
       });
 
-      // Pre-generate AI summaries and insights in the background
-      generateAISummariesInBackground(surveyData);
+      // Pre-generate insights in the background
       generateInsightsInBackground(surveyData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to process file');
     } finally {
       setIsProcessing(false);
     }
-  };
-
-  const generateAISummariesInBackground = async (surveyData: SurveyData) => {
-    setIsGeneratingAI(true);
-
-    // Get text columns (skip IDs)
-    const skipColumns = ['ResponseID', 'response_id', 'id', 'timestamp', 'Timestamp'];
-    const textColumns = surveyData.columns.filter((c: Column) =>
-      c.type === 'text' &&
-      !skipColumns.some(skip => c.name.toLowerCase().includes(skip.toLowerCase()))
-    );
-
-    // Generate AI summaries for each text column
-    for (const column of textColumns) {
-      const values = surveyData.rows
-        .map((row: Record<string, string | number>) => String(row[column.name] || ''))
-        .filter((v: string) => v.trim() && v.length > 3);
-
-      if (values.length > 0) {
-        try {
-          const aiSummary = await generateAISummaryWithOpenAI(column.name, values);
-          setAISummary(column.name, aiSummary);
-        } catch (error) {
-          console.error(`Failed to generate AI summary for ${column.name}:`, error);
-        }
-      }
-    }
-
-    setIsGeneratingAI(false);
   };
 
   const generateSmartLabelsInBackground = async (surveyData: SurveyData) => {

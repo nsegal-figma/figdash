@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BarChart3, Upload, LayoutDashboard, Lightbulb } from 'lucide-react';
+import { BarChart3, Upload, LayoutDashboard } from 'lucide-react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 
 export function Navigation() {
@@ -10,7 +10,6 @@ export function Navigation() {
   const links = [
     { path: '/', label: 'Upload', icon: Upload },
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/insights', label: 'Insights', icon: Lightbulb },
   ];
 
   return (

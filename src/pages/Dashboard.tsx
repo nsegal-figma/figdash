@@ -64,7 +64,6 @@ export function SurveyDashboard() {
 
     // Convert to format expected by UI and apply filters
     const mapped = visualizations
-      .filter(v => v.visualization !== 'text_analysis') // Text goes to Insights page
       .map(v => {
         const columnName = v.columnName;
         const filter = filters.get(columnName);
@@ -410,7 +409,7 @@ export function SurveyDashboard() {
         </div>
 
         {/* Navigation */}
-        <div className="mt-12 flex justify-center gap-3">
+        <div className="mt-12 flex justify-center">
           <button
             onClick={() => navigate('/')}
             className="px-5 py-2.5 border rounded-lg transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1"
@@ -424,20 +423,6 @@ export function SurveyDashboard() {
             }}
           >
             Upload New Data
-          </button>
-          <button
-            onClick={() => navigate('/insights')}
-            className="px-5 py-2.5 border rounded-lg transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-1"
-            style={{
-              fontFamily: styles.fontFamily,
-              fontSize: styles.labelFontSize,
-              fontWeight: 500,
-              color: theme.colors.textPrimary,
-              borderColor: theme.colors.textPrimary,
-              backgroundColor: theme.colors.cardBackground,
-            }}
-          >
-            Text Insights
           </button>
         </div>
       </div>

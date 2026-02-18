@@ -218,7 +218,7 @@ export interface ColumnVisualization {
   columnName: string;
   title: string;
   type: 'categorical' | 'numeric' | 'text';
-  visualization: 'bar' | 'average' | 'text_analysis';
+  visualization: 'bar' | 'average';
   data: Array<{ name: string; value: number; count?: number }>;
   n: number;
   recommendations: ChartRecommendation[];
@@ -334,18 +334,7 @@ export function generateAllVisualizations(
       }
     }
 
-    // TEXT: Flag for text analysis
-    else if (column.type === 'text') {
-      visualizations.push({
-        columnName: column.name,
-        title: formatColumnTitle(column.name),
-        type: 'text',
-        visualization: 'text_analysis',
-        data: [],
-        n: values.length,
-        recommendations: [], // No chart recommendations for text analysis
-      });
-    }
+    // TEXT: Skip — no chart visualization for free text
   });
 
   return visualizations;

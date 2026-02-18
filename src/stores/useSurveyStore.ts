@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import type { SurveyData } from '../types/survey';
 import { DEFAULT_PALETTE, type ColorPalette } from '../lib/colorPalettes';
-import type { AISummaryResponse } from '../lib/ai/openai';
+
 import type { Insight } from '../lib/ai/insightDiscovery';
 import type { ExecutiveSummary } from '../lib/ai/executiveSummary';
 import type { CleaningReport, CleaningSettings, CleaningMode } from '../types/cleaning';
@@ -15,8 +15,6 @@ interface SurveyStore {
   error: string | null;
   selectedPalette: ColorPalette;
   sortOrder: SortOrder;
-  aiSummaries: Map<string, AISummaryResponse>;
-  isGeneratingAI: boolean;
   filters: Map<string, string[]>; // columnName -> selected values
   customTitles: Map<string, string>; // columnName -> custom title
   figmaToken: string | null;
@@ -43,8 +41,6 @@ interface SurveyStore {
   setError: (error: string | null) => void;
   setSelectedPalette: (palette: ColorPalette) => void;
   setSortOrder: (order: SortOrder) => void;
-  setAISummary: (columnName: string, summary: AISummaryResponse) => void;
-  setIsGeneratingAI: (isGenerating: boolean) => void;
   setFilter: (columnName: string, values: string[]) => void;
   clearFilter: (columnName: string) => void;
   clearAllFilters: () => void;
@@ -80,8 +76,6 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   error: null,
   selectedPalette: DEFAULT_PALETTE,
   sortOrder: 'original',
-  aiSummaries: new Map(),
-  isGeneratingAI: false,
   filters: new Map(),
   customTitles: new Map(),
   figmaToken: localStorage.getItem('figma_token') || null,
@@ -107,13 +101,6 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
   setError: (error) => set({ error, isLoading: false }),
   setSelectedPalette: (palette) => set({ selectedPalette: palette }),
   setSortOrder: (order) => set({ sortOrder: order }),
-  setAISummary: (columnName, summary) =>
-    set((state) => {
-      const newSummaries = new Map(state.aiSummaries);
-      newSummaries.set(columnName, summary);
-      return { aiSummaries: newSummaries };
-    }),
-  setIsGeneratingAI: (isGenerating) => set({ isGeneratingAI: isGenerating }),
   setFilter: (columnName, values) =>
     set((state) => {
       const newFilters = new Map(state.filters);
@@ -192,7 +179,6 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
       surveyData: null,
       error: null,
       isLoading: false,
-      aiSummaries: new Map(),
       filters: new Map(),
       customTitles: new Map(),
       smartLabels: new Map(),
