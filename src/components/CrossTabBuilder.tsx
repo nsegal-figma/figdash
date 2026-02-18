@@ -299,10 +299,22 @@ export function CrossTabBuilder() {
               <button
                 key={idx}
                 onClick={() => handleCreateFromSuggestion(suggestion.rowColumn, suggestion.segmentColumn)}
-                className="w-full rounded-md border p-3 text-left transition-colors hover:opacity-90"
+                className="w-full rounded-md border p-3 text-left transition-all"
                 style={{
                   backgroundColor: theme.colors.cardBackground,
                   borderColor: theme.colors.borderColor,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = theme.colors.textPrimary;
+                  e.currentTarget.style.backgroundColor = `${theme.colors.textPrimary}05`;
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = theme.colors.borderColor;
+                  e.currentTarget.style.backgroundColor = theme.colors.cardBackground;
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
                 }}
               >
                 <div className="flex items-start justify-between">

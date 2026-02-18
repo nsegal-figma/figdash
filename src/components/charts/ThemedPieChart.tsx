@@ -61,6 +61,7 @@ interface CustomLabelProps {
   name: string;
   theme: ChartTheme;
   styles: ReturnType<typeof import('../../lib/themes').computeThemeStyles>;
+  legendVisible?: boolean;
 }
 
 function CustomLabel({
@@ -72,6 +73,7 @@ function CustomLabel({
   name,
   theme,
   styles,
+  legendVisible,
 }: CustomLabelProps) {
   const RADIAN = Math.PI / 180;
   const radius = outerRadius * 1.2;
@@ -86,6 +88,9 @@ function CustomLabel({
   // Small offset (2px) to prevent text touching the line endpoint
   const xOffset = x > cx ? 2 : -2;
 
+  // When legend is visible, show only percentage to avoid redundancy
+  const labelText = legendVisible ? `${percentValue}%` : `${name}: ${percentValue}%`;
+
   return (
     <text
       x={x + xOffset}
@@ -99,7 +104,7 @@ function CustomLabel({
         fontWeight: theme.typography.labelWeight,
       }}
     >
-      {`${name}: ${percentValue}%`}
+      {labelText}
     </text>
   );
 }
@@ -233,7 +238,18 @@ export function ThemedPieChart({
               paddingAngle={data.length > 1 ? 2 : 0}
               minAngle={3}
               dataKey="value"
-              labelLine={showLabels ? { strokeWidth: 1 } : false}
+              labelLine={showLabels ? ((props: Record<string, unknown>) => {
+                if ((props.percent as number) < 0.03) return <path d="" />;
+                const pts = props.points as Array<{ x: number; y: number }>;
+                return (
+                  <path
+                    d={`M${pts[0].x},${pts[0].y}L${pts[1].x},${pts[1].y}`}
+                    stroke={theme.colors.textMuted}
+                    strokeWidth={1}
+                    fill="none"
+                  />
+                );
+              }) as unknown as boolean : false}
               label={
                 showLabels
                   ? ((props: Record<string, unknown>) => (
@@ -247,6 +263,7 @@ export function ThemedPieChart({
                         name={props.name as string}
                         theme={theme}
                         styles={styles}
+                        legendVisible={showLegend}
                       />
                     )) as unknown as boolean
                   : undefined

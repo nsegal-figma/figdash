@@ -208,12 +208,18 @@ export function Upload() {
     setShowModeSelector(true);
   };
 
-  const handleBackToStructural = () => {
-    // Go back from quality to structural
+  const handleBackFromQuality = () => {
     setShowModeSelector(false);
     setShowManualPanel(false);
-    setShowCleaning(true);
-    setCurrentStep('structural');
+
+    // If there were structural issues, go back to structural cleaning
+    if (dataIssues && (dataIssues.hasMultipleHeaderRows || dataIssues.hasMetadataColumns)) {
+      setShowCleaning(true);
+      setCurrentStep('structural');
+    } else {
+      // No structural issues existed — go back to file upload
+      handleFileRemove();
+    }
   };
 
   const handleBackToQuality = () => {
@@ -425,6 +431,7 @@ export function Upload() {
               issues={dataIssues}
               onClean={handleCleanData}
               onSkip={handleSkipCleaning}
+              onBack={handleFileRemove}
             />
           )}
 
@@ -434,7 +441,7 @@ export function Upload() {
               issueCount={6}
               onSelectMode={handleModeSelection}
               onSkip={handleSkipAdvancedCleaning}
-              onBack={handleBackToStructural}
+              onBack={handleBackFromQuality}
               onLoadTemplate={(settings) => setCurrentCleaningSettings(settings)}
             />
           )}
