@@ -139,8 +139,6 @@ export const ChartRenderer = memo(function ChartRenderer({
           theme={theme}
           styles={styles}
           height={height}
-          centerValue={`n=${totalN}`}
-          centerLabel="responses"
           columnName={columnName}
           storytelling={storytellingProps}
         />

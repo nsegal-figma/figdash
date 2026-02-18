@@ -61,7 +61,6 @@ interface CustomLabelProps {
   name: string;
   theme: ChartTheme;
   styles: ReturnType<typeof import('../../lib/themes').computeThemeStyles>;
-  legendVisible?: boolean;
 }
 
 function CustomLabel({
@@ -73,7 +72,6 @@ function CustomLabel({
   name,
   theme,
   styles,
-  legendVisible,
 }: CustomLabelProps) {
   const RADIAN = Math.PI / 180;
   const radius = outerRadius * 1.2;
@@ -88,8 +86,10 @@ function CustomLabel({
   // Small offset (2px) to prevent text touching the line endpoint
   const xOffset = x > cx ? 2 : -2;
 
-  // When legend is visible, show only percentage to avoid redundancy
-  const labelText = legendVisible ? `${percentValue}%` : `${name}: ${percentValue}%`;
+  // Truncate long names to prevent overflow
+  const maxLen = 30;
+  const displayName = name.length > maxLen ? name.substring(0, maxLen - 1) + '…' : name;
+  const labelText = `${displayName}: ${percentValue}%`;
 
   return (
     <text
@@ -263,7 +263,6 @@ export function ThemedPieChart({
                         name={props.name as string}
                         theme={theme}
                         styles={styles}
-                        legendVisible={showLegend}
                       />
                     )) as unknown as boolean
                   : undefined
@@ -290,7 +289,7 @@ export function ThemedPieChart({
             <Tooltip
               content={<CustomTooltip totalN={totalN} theme={theme} styles={styles} />}
             />
-            {showLegend && (
+            {showLegend && !showLabels && (
               <Legend
                 verticalAlign="bottom"
                 height={48}
