@@ -21,17 +21,10 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
   const prefersReducedMotion = useReducedMotion();
   const surveyType = useSurveyStore((s) => s.surveyType);
 
-  const hasAiBullets = !!(executiveSummary?.keyTakeaways?.length || executiveSummary?.surprisingFindings?.length);
-  const hasInsights = hasAiBullets || insights.length > 0;
+  const hasInsights = insights.length > 0;
   const showRecommendations = surveyType === 'regular' && executiveSummary && executiveSummary.recommendations.length > 0;
 
   if (insights.length === 0 && !isLoading) return null;
-
-  const bulletStyle = {
-    fontFamily: styles.fontFamily,
-    fontSize: styles.labelFontSize,
-    color: theme.colors.textSecondary,
-  };
 
   return (
     <Card padding="lg" className="mb-8">
@@ -97,83 +90,49 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
               </div>
             )}
 
-            {/* Insights — all rendered as uniform bullets */}
+            {/* Insight cards */}
             {hasInsights && (
-              <div className="mb-6">
-                <h3
-                  className="mb-3"
-                  style={{
-                    fontFamily: styles.fontFamily,
-                    fontSize: styles.labelFontSize,
-                    fontWeight: 500,
-                    color: theme.colors.textSecondary,
-                  }}
-                >
-                  Insights
-                </h3>
-                {/* AI-generated bullets */}
-                {hasAiBullets && (
-                  <ul className="mb-4 space-y-1.5">
-                    {executiveSummary?.keyTakeaways?.map((takeaway, idx) => (
-                      <li key={`takeaway-${idx}`} className="flex items-start gap-2" style={bulletStyle}>
-                        <span className="mt-1" style={{ color: theme.colors.textMuted }}>•</span>
-                        <span>{takeaway}</span>
-                      </li>
-                    ))}
-                    {executiveSummary?.surprisingFindings?.map((finding, idx) => (
-                      <li key={`surprising-${idx}`} className="flex items-start gap-2" style={bulletStyle}>
-                        <span className="mt-1" style={{ color: theme.colors.textMuted }}>•</span>
-                        <span>{finding}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
-                {/* Statistical insight cards */}
-                {insights.length > 0 && (
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {insights.map((insight) => (
-                      <motion.div
-                        key={insight.id}
-                        className="rounded-lg border p-4"
-                        style={{
-                          borderColor: theme.colors.borderColor,
-                          backgroundColor: 'transparent',
-                        }}
-                        whileHover={{ y: -1 }}
-                        transition={{ duration: prefersReducedMotion ? 0 : 0.15 }}
-                      >
-                        <p
-                          style={{
-                            fontFamily: styles.fontFamily,
-                            fontSize: styles.labelFontSize,
-                            fontWeight: 600,
-                            color: theme.colors.textPrimary,
-                            marginBottom: '0.25rem',
-                          }}
-                        >
-                          {insight.title}
-                        </p>
-                        <p
-                          style={{
-                            fontFamily: styles.fontFamily,
-                            fontSize: styles.axisTickFontSize,
-                            color: theme.colors.textMuted,
-                            lineHeight: 1.4,
-                          }}
-                        >
-                          {insight.description}
-                        </p>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
+              <div className="grid gap-3 sm:grid-cols-2">
+                {insights.map((insight) => (
+                  <motion.div
+                    key={insight.id}
+                    className="rounded-lg border p-4"
+                    style={{
+                      borderColor: theme.colors.borderColor,
+                      backgroundColor: 'transparent',
+                    }}
+                    whileHover={{ y: -1 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.15 }}
+                  >
+                    <p
+                      style={{
+                        fontFamily: styles.fontFamily,
+                        fontSize: styles.labelFontSize,
+                        fontWeight: 600,
+                        color: theme.colors.textPrimary,
+                        marginBottom: '0.25rem',
+                      }}
+                    >
+                      {insight.title}
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: styles.fontFamily,
+                        fontSize: styles.axisTickFontSize,
+                        color: theme.colors.textMuted,
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {insight.description}
+                    </p>
+                  </motion.div>
+                ))}
               </div>
             )}
 
             {/* Recommendations — regular surveys only */}
             {showRecommendations && (
-              <div>
+              <div className="mt-6">
                 <h3
                   className="mb-3"
                   style={{
@@ -187,7 +146,15 @@ export function KeyFindings({ insights, executiveSummary, isLoading }: KeyFindin
                 </h3>
                 <ul className="space-y-1.5">
                   {executiveSummary!.recommendations.map((rec, idx) => (
-                    <li key={idx} className="flex items-start gap-2" style={bulletStyle}>
+                    <li
+                      key={idx}
+                      className="flex items-start gap-2"
+                      style={{
+                        fontFamily: styles.fontFamily,
+                        fontSize: styles.labelFontSize,
+                        color: theme.colors.textSecondary,
+                      }}
+                    >
                       <span className="mt-1" style={{ color: theme.colors.textMuted }}>&rarr;</span>
                       <span>{rec}</span>
                     </li>
